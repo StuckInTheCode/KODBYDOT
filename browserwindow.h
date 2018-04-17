@@ -54,6 +54,8 @@
 #include <QMainWindow>
 #include <QWebEnginePage>
 
+
+class QLineEdit;
 class Browser;
 class TabWidget;
 class WebView;
@@ -74,7 +76,10 @@ private:
     QMenu *createWindowMenu(TabWidget *tabWidget);
     QMenu *createHelpMenu();
     QToolBar *createToolBar();
+
     Browser *m_browser;
+    QLineEdit *m_urlLineEdit;
+    QWebEngineProfile *m_profile;
     TabWidget *m_tabWidget;
 };
 

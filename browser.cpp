@@ -49,8 +49,17 @@
 ****************************************************************************/
 
 #include "browser.h"
-
+#include "browserwindow.h"
+#include <QWebEngineProfile>
 
 Browser::Browser()
 {
+}
+
+BrowserWindow *Browser::createWindow(bool offTheRecord)
+{
+    auto mainWindow = new BrowserWindow(this, QWebEngineProfile::defaultProfile());
+    mWindows.append(mainWindow);
+    mainWindow->show();
+    return mainWindow;
 }

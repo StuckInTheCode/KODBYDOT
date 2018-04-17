@@ -60,9 +60,9 @@ class Browser
 {
 public:
     Browser();
-    QVector<BrowserWindow*> windows() { return m_windows; }
+    QVector<BrowserWindow*> windows() { return mWindows; }
     BrowserWindow *createWindow(bool offTheRecord = false);
 private:
-    QVector<BrowserWindow*> m_windows;
+    QVector<BrowserWindow*> mWindows;
 };
 #endif // BROWSER_H

@@ -48,5 +48,42 @@
 **
 ****************************************************************************/
 
+#include "browser.h"
 #include "browserwindow.h"
+#include "downloadmanagerwidget.h"
+#include "tabwidget.h"
+#include "webview.h"
+#include <QApplication>
+#include <QCloseEvent>
+#include <QDesktopWidget>
+#include <QEvent>
+#include <QFileDialog>
+#include <QInputDialog>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QProgressBar>
+#include <QStatusBar>
+#include <QToolBar>
+#include <QVBoxLayout>
+#include <QWebEngineProfile>
 
+BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
+    : m_browser(browser)
+    , m_profile(profile)
+{
+    setAttribute(Qt::WA_DeleteOnClose, true);
+    setFocusPolicy(Qt::ClickFocus);
+
+
+    QWidget *mainWidget = new QWidget(this);
+    QToolBar toolbar("KODBYDOT",mainWidget);
+    addToolBar(&toolbar);
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setSpacing(0);
+    layout->setMargin(0);
+    addToolBarBreak();
+
+    mainWidget->setLayout(layout);
+    setCentralWidget(mainWidget);
+
+}
