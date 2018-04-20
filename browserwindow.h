@@ -55,19 +55,24 @@
 #include <QWebEnginePage>
 
 
-class QLineEdit;
+//class QLineEdit;
 class Browser;
 class TabWidget;
-class WebView;
+//class WebView;
+QT_BEGIN_NAMESPACE
+namespace Ui {
+class window;
+}
 
+QT_END_NAMESPACE
 class BrowserWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
     BrowserWindow(Browser *browser, QWebEngineProfile *profile);
-    TabWidget *tabWidget() const;
-    WebView *currentTab() const;
+    //TabWidget *tabWidget() const;
+    //WebView *currentTab() const;
     Browser *browser() { return m_browser; }
 private:
     QMenu *createFileMenu(TabWidget *tabWidget);
@@ -76,11 +81,14 @@ private:
     QMenu *createWindowMenu(TabWidget *tabWidget);
     QMenu *createHelpMenu();
     QToolBar *createToolBar();
-
+private slots:
+    void on_pushButton_clicked();
+private:
     Browser *m_browser;
-    QLineEdit *m_urlLineEdit;
+    //QLineEdit *m_urlLineEdit;
     QWebEngineProfile *m_profile;
-    TabWidget *m_tabWidget;
+    Ui::window *ui;
+    //TabWidget *m_tabWidget;
 };
 
 #endif // BROWSERWINDOW_H

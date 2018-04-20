@@ -20,7 +20,8 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs depr
 SOURCES += \
         main.cpp \
     browser.cpp \
-    browserwindow.cpp
+    browserwindow.cpp \
+    webview.cpp
 
 HEADERS += \
     browser.h \
@@ -31,3 +32,6 @@ HEADERS += \
     webpage.h \
     webpopupwindow.h \
     webview.h
+
+FORMS += \
+    window.ui

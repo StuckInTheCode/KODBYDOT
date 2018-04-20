@@ -66,14 +66,18 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 #include <QWebEngineProfile>
+#include "ui_window.h"
 
 BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     : m_browser(browser)
     , m_profile(profile)
+    ,ui(new Ui::window)
+    //, m_tabWidget(new TabWidget(profile, this))
 {
-    setAttribute(Qt::WA_DeleteOnClose, true);
+    ui->setupUi(this);
+    ui->preview->load(QUrl("http://harrix.org/"));
+    /*setAttribute(Qt::WA_DeleteOnClose, true);
     setFocusPolicy(Qt::ClickFocus);
-
 
     QWidget *mainWidget = new QWidget(this);
     QToolBar toolbar("KODBYDOT",mainWidget);
@@ -81,9 +85,20 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setSpacing(0);
     layout->setMargin(0);
+    layout->addWidget(m_tabWidget);
+
+    //mainWidget->setLayout(m_tabWidget);
     addToolBarBreak();
 
     mainWidget->setLayout(layout);
-    setCentralWidget(mainWidget);
+    setCentralWidget(mainWidget);*/
+    //m_tabWidget->createTab();
 
 }
+
+void BrowserWindow:: on_pushButton_clicked()
+{
+    //ui->preview->load(QUrl("http://harrix.org/"));
+    //ui->show();
+}
+

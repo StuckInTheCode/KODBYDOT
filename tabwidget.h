@@ -1,63 +1,14 @@
-/****************************************************************************
-**
-** Copyright (C) 2016 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the examples of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** BSD License Usage
-** Alternatively, you may use this file under the terms of the BSD license
-** as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of The Qt Company Ltd nor the names of its
-**     contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
-
 #ifndef TABWIDGET_H
 #define TABWIDGET_H
 
 #include <QTabWidget>
 #include <QWebEnginePage>
+#include <QLineEdit>
+#include <QTabBar>
+#include "webview.h"
 
-QT_BEGIN_NAMESPACE
 class QUrl;
-QT_END_NAMESPACE
-
+//class QTabBar;
 class WebView;
 
 class TabWidget : public QTabWidget
@@ -65,22 +16,86 @@ class TabWidget : public QTabWidget
     Q_OBJECT
 
 public:
-    TabWidget(QWebEngineProfile *profile, QWidget *parent = nullptr);
-    WebView *currentWebView() const;
+    TabWidget(QWebEngineProfile *profile, QWidget *parent = nullptr): QTabWidget(parent), m_profile(profile)
+    {
+            setAttribute(Qt::WA_DeleteOnClose, true);
+            QTabBar *tabBar = this->tabBar();
+            tabBar->setTabsClosable(true);
+            tabBar->setSelectionBehaviorOnRemove(QTabBar::SelectPreviousTab);
+            tabBar->setMovable(true);
+            tabBar->setContextMenuPolicy(Qt::CustomContextMenu);
+            //connect(tabBar, &QTabBar::customContextMenuRequested, this, &TabWidget::handleContextMenuRequested);
+            connect(tabBar, &QTabBar::tabCloseRequested, this, &TabWidget::closeTab);
+            connect(tabBar, &QTabBar::tabBarDoubleClicked, [this](int index) {
+                if (index == -1)
+                    createTab();
+            });
+
+            setDocumentMode(true);
+            setElideMode(Qt::ElideRight);
+
+            //connect(this, &QTabWidget::currentChanged, this, &TabWidget::handleCurrentChanged);
+    }
+
+    WebView* createTab()
+    {
+        WebView *webView = createBackgroundTab();
+        setCurrentWidget(webView);
+        return webView;
+    }
+    WebView* createBackgroundTab()
+    {
+        WebView *webView = new WebView(nullptr);
+        //WebPage *webPage = new WebPage(m_profile, webView);
+        //webView->setPage(webPage);
+        setupView(webView);
+        //int index = addTab(webView, tr("(Untitled)"));
+        //setTabIcon(index, webView->favIcon());
+        //Workaround for QTBUG-61770
+        //webView->resize(currentWidget()->size()); //вызывает исключение
+        webView->show();
+        return webView;
+    }
+
+signals:
+
+public slots:
+    void closeTab(int index)
+    {
+        if (WebView *view = webView(index)) {
+               //bool hasFocus = view->hasFocus();
+               removeTab(index);
+               //if (hasFocus && count() > 0)
+               //    currentWebView()->setFocus();
+               if (count() == 0)
+                   createTab();
+               view->deleteLater();
+           }
+
+    }
+    /*WebView *currentWebView() const;
     void setUrl(const QUrl &url);
     WebView *createTab();
     WebView *createBackgroundTab();
-    void closeTab(int index);
+
     void nextTab();
     void previousTab();
     void cloneTab(int index);
     void closeOtherTabs(int index);
     void reloadAllTabs();
-    void reloadTab(int index);
+    void reloadTab(int index);*/
+
 
 private:
-    WebView *webView(int index) const;
-    void setupView(WebView *webView);
+
+    QUrl *m_url;
+    QLineEdit *UrlPath;
+    WebView *webView(int index) const
+    {
+        return qobject_cast<WebView*>(widget(index));
+    }
+    void setupView(WebView *webView)
+    {    QWebEnginePage *webPage = webView->page();}
     QWebEngineProfile *m_profile;
 };
 
