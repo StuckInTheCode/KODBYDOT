@@ -74,7 +74,7 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
 {
     //ui->setupUi(this);
     //ui->preview->load(QUrl("http://harrix.org/"));
-    /*setAttribute(Qt::WA_DeleteOnClose, true);
+    setAttribute(Qt::WA_DeleteOnClose, true);
     setFocusPolicy(Qt::ClickFocus);
 
     QWidget *mainWidget = new QWidget(this);
@@ -89,7 +89,7 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     addToolBarBreak();
 
     mainWidget->setLayout(layout);
-    setCentralWidget(mainWidget);*/
+    setCentralWidget(mainWidget);
     //m_tabWidget->createTab();
 
 }

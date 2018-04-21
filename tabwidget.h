@@ -16,20 +16,20 @@ class window;
 }
 class WebView;
 
-class TabWidget : public QTabWidget
+class TabWidget : public QTabWidget, public Ui::window
 {
     Q_OBJECT
 
 public:
-    TabWidget(QWebEngineProfile *profile, QWidget *parent = nullptr): QTabWidget(parent), m_profile(profile),ui(new Ui::window)
+    TabWidget(QWebEngineProfile *profile, QWidget *parent = nullptr): QTabWidget(parent), m_profile(profile)//,ui(new Ui::window)
     {
-        ui->setupUi(this);
-        ui->preview->load(QUrl("http://harrix.org/"));
+        setupUi(this);
+        preview->load(QUrl("http://harrix.org/"));
 
         //ui->tab();
         setAttribute(Qt::WA_DeleteOnClose, true);
         QTabBar *tabBar = this->tabBar();
-        tabBar->resize(50,20);
+        tabBar->resize(125,20);
             tabBar->setTabsClosable(true);
             tabBar->setSelectionBehaviorOnRemove(QTabBar::SelectPreviousTab);
             tabBar->setMovable(true);
@@ -40,18 +40,19 @@ public:
                 if (index == -1)
                     createTab();
             });
-
-            connect(ui->pushButton, &QPushButton::clicked, this, &TabWidget::add);
+            connect(GO,&QPushButton::clicked, this, &TabWidget::load);
+            connect(pushButton, &QPushButton::clicked, this, &TabWidget::createTab);
             setDocumentMode(true);
             setElideMode(Qt::ElideRight);
             createTab();
-            //connect(this, &QTabWidget::currentChanged, this, &TabWidget::handleCurrentChanged);
+            //connect(this, &QTabWidget::currentChanged, this, &TabWidget::handleCurrentChanged); !важно
     }
 
-    void add()
+    void load()
     {
-       createTab();
+       this->preview->load(QUrl(this->lineEdit->text()));
     }
+
     WebView* createTab()
     {
         WebView *webView = createBackgroundTab();
@@ -60,17 +61,21 @@ public:
     }
     WebView* createBackgroundTab()
     {
-        WebView *webView = new WebView(nullptr);
+        WebView *webView2 = new WebView(nullptr);
+        QWebEngineView * webView= new QWebEngineView(nullptr);
+        //this->preview->
         //WebPage *webPage = new WebPage(m_profile, webView);
         //webView->setPage(webPage);
-        setupView(webView);
+        //setupView(webView);
         //ui->tabWidget->addTab(webView, tr("(Untitled)"));
         int index = addTab(webView, tr("(Untitled)"));
+        this->preview=webView;
+        //preview=webView;
         //setTabIcon(index, webView->favIcon());
         //Workaround for QTBUG-61770
         webView->resize(currentWidget()->size()); //вызывает исключение
         webView->show();
-        return webView;
+        return webView2;
     }
 
 signals:
@@ -103,12 +108,12 @@ public slots:
 
 
 private:
-    Ui::window *ui;
+    //Ui::window *ui;
     //QUrl *m_url;
     //QLineEdit *UrlPath;
     WebView *webView(int index) const
     {
-        return qobject_cast<WebView*>(widget(index));
+        return qobject_cast<WebView*>(QTabWidget::widget(index));
     }
     void setupView(WebView *webView)
     {    QWebEnginePage *webPage = webView->page();}
