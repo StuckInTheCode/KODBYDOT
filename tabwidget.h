@@ -5,10 +5,15 @@
 #include <QWebEnginePage>
 #include <QLineEdit>
 #include <QTabBar>
+#include "ui_window.h"
 #include "webview.h"
 
 class QUrl;
 //class QTabBar;
+QT_BEGIN_NAMESPACE
+namespace Ui {
+class window;
+}
 class WebView;
 
 class TabWidget : public QTabWidget
@@ -16,10 +21,15 @@ class TabWidget : public QTabWidget
     Q_OBJECT
 
 public:
-    TabWidget(QWebEngineProfile *profile, QWidget *parent = nullptr): QTabWidget(parent), m_profile(profile)
+    TabWidget(QWebEngineProfile *profile, QWidget *parent = nullptr): QTabWidget(parent), m_profile(profile),ui(new Ui::window)
     {
-            setAttribute(Qt::WA_DeleteOnClose, true);
-            QTabBar *tabBar = this->tabBar();
+        ui->setupUi(this);
+        ui->preview->load(QUrl("http://harrix.org/"));
+
+        //ui->tab();
+        setAttribute(Qt::WA_DeleteOnClose, true);
+        QTabBar *tabBar = this->tabBar();
+        tabBar->resize(50,20);
             tabBar->setTabsClosable(true);
             tabBar->setSelectionBehaviorOnRemove(QTabBar::SelectPreviousTab);
             tabBar->setMovable(true);
@@ -31,12 +41,17 @@ public:
                     createTab();
             });
 
+            connect(ui->pushButton, &QPushButton::clicked, this, &TabWidget::add);
             setDocumentMode(true);
             setElideMode(Qt::ElideRight);
-
+            createTab();
             //connect(this, &QTabWidget::currentChanged, this, &TabWidget::handleCurrentChanged);
     }
 
+    void add()
+    {
+       createTab();
+    }
     WebView* createTab()
     {
         WebView *webView = createBackgroundTab();
@@ -49,10 +64,11 @@ public:
         //WebPage *webPage = new WebPage(m_profile, webView);
         //webView->setPage(webPage);
         setupView(webView);
-        //int index = addTab(webView, tr("(Untitled)"));
+        //ui->tabWidget->addTab(webView, tr("(Untitled)"));
+        int index = addTab(webView, tr("(Untitled)"));
         //setTabIcon(index, webView->favIcon());
         //Workaround for QTBUG-61770
-        //webView->resize(currentWidget()->size()); //вызывает исключение
+        webView->resize(currentWidget()->size()); //вызывает исключение
         webView->show();
         return webView;
     }
@@ -73,23 +89,23 @@ public slots:
            }
 
     }
-    /*WebView *currentWebView() const;
-    void setUrl(const QUrl &url);
-    WebView *createTab();
-    WebView *createBackgroundTab();
+    //WebView *currentWebView() const;
+    void setUrl(const QUrl &url){}
+    //WebView *createTab();
+    //WebView *createBackgroundTab();
 
-    void nextTab();
-    void previousTab();
-    void cloneTab(int index);
-    void closeOtherTabs(int index);
-    void reloadAllTabs();
-    void reloadTab(int index);*/
+    void nextTab(){}
+    void previousTab(){}
+    void cloneTab(int index){}
+    void closeOtherTabs(int index){}
+    void reloadAllTabs(){}
+    void reloadTab(int index){}
 
 
 private:
-
-    QUrl *m_url;
-    QLineEdit *UrlPath;
+    Ui::window *ui;
+    //QUrl *m_url;
+    //QLineEdit *UrlPath;
     WebView *webView(int index) const
     {
         return qobject_cast<WebView*>(widget(index));

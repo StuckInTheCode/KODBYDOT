@@ -66,16 +66,14 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 #include <QWebEngineProfile>
-#include "ui_window.h"
 
 BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     : m_browser(browser)
     , m_profile(profile)
-    ,ui(new Ui::window)
-    //, m_tabWidget(new TabWidget(profile, this))
+    , m_tabWidget(new TabWidget(profile, this))
 {
-    ui->setupUi(this);
-    ui->preview->load(QUrl("http://harrix.org/"));
+    //ui->setupUi(this);
+    //ui->preview->load(QUrl("http://harrix.org/"));
     /*setAttribute(Qt::WA_DeleteOnClose, true);
     setFocusPolicy(Qt::ClickFocus);
 

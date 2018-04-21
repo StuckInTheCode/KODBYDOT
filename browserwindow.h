@@ -59,10 +59,10 @@
 class Browser;
 class TabWidget;
 //class WebView;
-QT_BEGIN_NAMESPACE
+/*QT_BEGIN_NAMESPACE
 namespace Ui {
 class window;
-}
+}*/
 
 QT_END_NAMESPACE
 class BrowserWindow : public QMainWindow
@@ -81,14 +81,16 @@ private:
     QMenu *createWindowMenu(TabWidget *tabWidget);
     QMenu *createHelpMenu();
     QToolBar *createToolBar();
+//public signals:
+
 private slots:
     void on_pushButton_clicked();
 private:
     Browser *m_browser;
     //QLineEdit *m_urlLineEdit;
     QWebEngineProfile *m_profile;
-    Ui::window *ui;
-    //TabWidget *m_tabWidget;
+    //Ui::window *ui;
+    TabWidget *m_tabWidget;
 };
 
 #endif // BROWSERWINDOW_H
