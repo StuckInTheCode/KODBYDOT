@@ -87,7 +87,7 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
 
     //mainWidget->setLayout(m_tabWidget);
     addToolBarBreak();
-
+    connect(m_tabWidget->GO,&QPushButton::clicked, this, &BrowserWindow::on_pushButton_clicked);
     mainWidget->setLayout(layout);
     setCentralWidget(mainWidget);
     //m_tabWidget->createTab();
@@ -96,7 +96,9 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
 
 void BrowserWindow:: on_pushButton_clicked()
 {
-    //ui->preview->load(QUrl("http://harrix.org/"));
-    //ui->show();
+    //m_pages.put(&(m_tabWidget->preview->page()));
+    //m_pages.push_back();
+    //m_pages.contains();
+    //m_pages.removeOne()
 }
 

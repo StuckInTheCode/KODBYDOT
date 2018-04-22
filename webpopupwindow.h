@@ -69,7 +69,8 @@ public:
     WebPopupWindow(QWebEngineProfile *profile);
     WebView *view() const;
 private:
-    QLineEdit *m_urlLineEdit;
+    //QLineEdit *m_urlLineEdit;
+    //using ui?
     QAction *m_favAction;
     WebView *m_view;
 };

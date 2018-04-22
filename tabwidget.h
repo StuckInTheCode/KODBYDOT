@@ -9,12 +9,13 @@
 #include "webview.h"
 
 class QUrl;
-//class QTabBar;
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class window;
 }
 class WebView;
+/*Need to use the QWebEnginePage class instead the WebPage class*/
 
 class TabWidget : public QTabWidget, public Ui::window
 {
@@ -24,8 +25,7 @@ public:
     TabWidget(QWebEngineProfile *profile, QWidget *parent = nullptr): QTabWidget(parent), m_profile(profile)//,ui(new Ui::window)
     {
         setupUi(this);
-        preview->load(QUrl("http://harrix.org/"));
-
+        //preview->load(QUrl("http://harrix.org/"));
         //ui->tab();
         setAttribute(Qt::WA_DeleteOnClose, true);
         QTabBar *tabBar = this->tabBar();
@@ -45,37 +45,48 @@ public:
             setDocumentMode(true);
             setElideMode(Qt::ElideRight);
             createTab();
-            //connect(this, &QTabWidget::currentChanged, this, &TabWidget::handleCurrentChanged); !важно
+            connect(this, &QTabWidget::currentChanged, this, &TabWidget::handleCurrentChanged);// !важно
     }
 
+    void handleCurrentChanged()
+    {
+
+        int index = this->currentIndex();
+        //if(index<count())
+        //setCurrentIndex(index+1);
+        //this->preview->setPage(webView(index)->page());
+        //this->preview->se
+        setCurrentWidget(webView(index));
+    }
     void load()
     {
+       //this->preview->close();
        this->preview->load(QUrl(this->lineEdit->text()));
     }
 
-    WebView* createTab()
+    QWebEngineView* createTab()
     {
-        WebView *webView = createBackgroundTab();
+        QWebEngineView *webView = createBackgroundTab();
         setCurrentWidget(webView);
         return webView;
     }
-    WebView* createBackgroundTab()
+    QWebEngineView* createBackgroundTab()
     {
-        WebView *webView2 = new WebView(nullptr);
+        //WebView *webView2 = new WebView(nullptr);
         QWebEngineView * webView= new QWebEngineView(nullptr);
         //this->preview->
         //WebPage *webPage = new WebPage(m_profile, webView);
         //webView->setPage(webPage);
-        //setupView(webView);
+        setupView(webView);
         //ui->tabWidget->addTab(webView, tr("(Untitled)"));
         int index = addTab(webView, tr("(Untitled)"));
-        this->preview=webView;
         //preview=webView;
         //setTabIcon(index, webView->favIcon());
         //Workaround for QTBUG-61770
-        webView->resize(currentWidget()->size()); //вызывает исключение
-        webView->show();
-        return webView2;
+        //webView->resize(currentWidget()->size()); //вызывает исключение
+        //webView->show();
+
+        return webView;
     }
 
 signals:
@@ -115,8 +126,11 @@ private:
     {
         return qobject_cast<WebView*>(QTabWidget::widget(index));
     }
-    void setupView(WebView *webView)
-    {    QWebEnginePage *webPage = webView->page();}
+    void setupView(QWebEngineView *webView)
+    {
+        QWebEnginePage *webPage = webView->page();
+        this->preview->setPage(webPage);
+    }
     QWebEngineProfile *m_profile;
 };
 
