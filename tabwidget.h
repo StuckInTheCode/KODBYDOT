@@ -17,14 +17,14 @@ class window;
 class WebView;
 /*Need to use the QWebEnginePage class instead the WebPage class*/
 
-class TabWidget : public QTabWidget, public Ui::window
+class TabWidget : public QTabWidget//, public Ui::window
 {
     Q_OBJECT
 
 public:
-    TabWidget(QWebEngineProfile *profile, QWidget *parent = nullptr): QTabWidget(parent), m_profile(profile)//,ui(new Ui::window)
+    TabWidget(QWebEngineProfile *profile, QWidget *parent = nullptr): QTabWidget(parent), m_profile(profile),ui(new Ui::window)
     {
-        setupUi(this);
+        ui->setupUi(this);
         //preview->load(QUrl("http://harrix.org/"));
         //ui->tab();
         setAttribute(Qt::WA_DeleteOnClose, true);
@@ -40,28 +40,35 @@ public:
                 if (index == -1)
                     createTab();
             });
-            connect(GO,&QPushButton::clicked, this, &TabWidget::load);
-            connect(pushButton, &QPushButton::clicked, this, &TabWidget::createTab);
+            connect(ui->GO,&QPushButton::clicked, this, &TabWidget::load);
+            //QPushButton * newtab = ui->pushButton;
+            connect(this->ui->pushButton, &QPushButton::clicked, this, &TabWidget::createTab);
             setDocumentMode(true);
             setElideMode(Qt::ElideRight);
             createTab();
-            connect(this, &QTabWidget::currentChanged, this, &TabWidget::handleCurrentChanged);// !важно
+           // connect(this, &QTabWidget::currentChanged, this, &TabWidget::handleCurrentChanged);// !важно
     }
 
     void handleCurrentChanged()
     {
 
-        int index = this->currentIndex();
+        //int index = this->currentIndex();
         //if(index<count())
         //setCurrentIndex(index+1);
         //this->preview->setPage(webView(index)->page());
         //this->preview->se
-        setCurrentWidget(webView(index));
+        //setCurrentWidget(webView(index));
+        //setupView(webView(index));
+        //this->preview = webView(index);
     }
     void load()
     {
+        QWebEngineView *view = webView(currentIndex());
+        view->load(QUrl(ui->lineEdit->text()));
+       //QWebEngineView * webView = this->currentWidget()->children();
+       // webView->load(QUrl(ui->lineEdit->text()));
        //this->preview->close();
-       this->preview->load(QUrl(this->lineEdit->text()));
+       //ui->preview->load(QUrl(ui->lineEdit->text()));
     }
 
     QWebEngineView* createTab()
@@ -74,6 +81,7 @@ public:
     {
         //WebView *webView2 = new WebView(nullptr);
         QWebEngineView * webView= new QWebEngineView(nullptr);
+
         //this->preview->
         //WebPage *webPage = new WebPage(m_profile, webView);
         //webView->setPage(webPage);
@@ -84,8 +92,9 @@ public:
         //setTabIcon(index, webView->favIcon());
         //Workaround for QTBUG-61770
         //webView->resize(currentWidget()->size()); //вызывает исключение
-        //webView->show();
-
+        webView->show();
+        webView->load(QUrl("http://harrix.org/"));
+        //webView->load(QUrl(ui->lineEdit->text()));
         return webView;
     }
 
@@ -94,7 +103,7 @@ signals:
 public slots:
     void closeTab(int index)
     {
-        if (WebView *view = webView(index)) {
+        if (QWebEngineView *view = webView(index)) {
                //bool hasFocus = view->hasFocus();
                removeTab(index);
                //if (hasFocus && count() > 0)
@@ -119,17 +128,18 @@ public slots:
 
 
 private:
-    //Ui::window *ui;
+    Ui::window *ui;
     //QUrl *m_url;
     //QLineEdit *UrlPath;
-    WebView *webView(int index) const
+    QWebEngineView *webView(int index) const
     {
-        return qobject_cast<WebView*>(QTabWidget::widget(index));
+        return qobject_cast<QWebEngineView*>(QTabWidget::widget(index));
     }
     void setupView(QWebEngineView *webView)
     {
-        QWebEnginePage *webPage = webView->page();
-        this->preview->setPage(webPage);
+       // QWebEnginePage *webPage = webView->page();
+
+        //ui->preview->setPage(webPage);
     }
     QWebEngineProfile *m_profile;
 };

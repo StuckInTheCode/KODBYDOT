@@ -13,17 +13,7 @@
   <property name="windowTitle">
    <string>KODBYDOT</string>
   </property>
-  <widget class="QWebEngineView" name="preview" native="true">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>60</y>
-     <width>801</width>
-     <height>431</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -53,31 +43,6 @@
    </layout>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QWebEngineView</class>
-   <extends>QWidget</extends>
-   <header>qwebengineview.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>GO</sender>
-   <signal>clicked()</signal>
-   <receiver>preview</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>732</x>
-     <y>73</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>412</x>
-     <y>287</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

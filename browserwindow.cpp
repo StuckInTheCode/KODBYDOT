@@ -87,7 +87,7 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
 
     //mainWidget->setLayout(m_tabWidget);
     addToolBarBreak();
-    connect(m_tabWidget->GO,&QPushButton::clicked, this, &BrowserWindow::on_pushButton_clicked);
+    //connect(m_tabWidget->GO,&QPushButton::clicked, this, &BrowserWindow::on_pushButton_clicked);
     mainWidget->setLayout(layout);
     setCentralWidget(mainWidget);
     //m_tabWidget->createTab();
