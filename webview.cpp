@@ -17,4 +17,26 @@ void WebView::setPage(WebPage *page)
 {
     QWebEngineView::setPage(page);
 }
+QWebEngineView *WebView::createWindow(QWebEnginePage::WebWindowType type)
+{
+    BrowserWindow *mainWindow = qobject_cast<BrowserWindow*>(window());
+    if (!mainWindow)
+        return nullptr;
 
+    switch (type) {
+    case QWebEnginePage::WebBrowserTab: {
+        //return mainWindow->tabWidget()->createTab();
+    }
+    case QWebEnginePage::WebBrowserBackgroundTab: {
+        //return mainWindow->tabWidget()->createBackgroundTab();
+    }
+    case QWebEnginePage::WebBrowserWindow: {
+        //return mainWindow->browser()->createWindow()->currentTab();
+    }
+    case QWebEnginePage::WebDialog: {
+        //WebPopupWindow *popup = new WebPopupWindow(page()->profile());
+        //return popup->view();
+    }
+    }
+    return nullptr;
+}

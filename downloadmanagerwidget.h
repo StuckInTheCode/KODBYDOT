@@ -52,6 +52,8 @@
 #define DOWNLOADMANAGERWIDGET_H
 
 #include <QWidget>
+#include <QFileDialog>
+#include <QWebEngineDownloadItem>
 
 QT_BEGIN_NAMESPACE
 class QWebEngineDownloadItem;
@@ -63,9 +65,8 @@ class DownloadManagerWidget final : public QWidget
 {
     Q_OBJECT
 public:
-    DownloadManagerWidget(QWidget *parent = nullptr);
-    void downloadRequested(QWebEngineDownloadItem *webItem);
-
+    explicit DownloadManagerWidget (QWidget *parent = nullptr);
+    void downloadRequested(QWebEngineDownloadItem *download);
 private:
     void add(DownloadWidget *downloadWidget);
     void remove(DownloadWidget *downloadWidget);

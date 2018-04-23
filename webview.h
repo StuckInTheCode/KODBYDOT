@@ -14,7 +14,7 @@ class WebView : public QWebEngineView
 public:
     WebView(QWidget *parent = nullptr);
     void setPage(WebPage *page);
-    //QWebEngineView *createWindow(QWebEnginePage::WebWindowType type) override; //изменяет виртуальную функцию, вызываемую внутри класса, таким образом создавая разные вариаты окон
+    QWebEngineView *createWindow(QWebEnginePage::WebWindowType type) override; //изменяет виртуальную функцию, вызываемую внутри класса, таким образом создавая разные вариаты окон
 };
 
 #endif

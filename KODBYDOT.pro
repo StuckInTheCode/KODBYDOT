@@ -21,7 +21,8 @@ SOURCES += \
         main.cpp \
     browser.cpp \
     browserwindow.cpp \
-    webview.cpp
+    webview.cpp \
+    downloadmanagerwidget.cpp
 
 HEADERS += \
     browser.h \

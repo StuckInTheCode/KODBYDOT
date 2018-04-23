@@ -53,7 +53,7 @@
 
 #include <QVector>
 #include <QWebEngineProfile>
-
+#include "downloadmanagerwidget.h"
 
 class BrowserWindow;
 
@@ -65,5 +65,6 @@ public:
     BrowserWindow *createWindow();
 private:
     QVector<BrowserWindow*> mWindows;
+    DownloadManagerWidget m_downloadManagerWidget;
 };
 #endif // BROWSER_H
