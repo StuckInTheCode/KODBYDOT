@@ -54,6 +54,7 @@
 #include <QVector>
 #include <QWebEngineProfile>
 
+
 class BrowserWindow;
 
 class Browser
@@ -61,7 +62,7 @@ class Browser
 public:
     Browser();
     QVector<BrowserWindow*> windows() { return mWindows; }
-    BrowserWindow *createWindow(bool offTheRecord = false);
+    BrowserWindow *createWindow();
 private:
     QVector<BrowserWindow*> mWindows;
 };

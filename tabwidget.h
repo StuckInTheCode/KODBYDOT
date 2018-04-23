@@ -24,12 +24,14 @@ class TabWidget : public QTabWidget//, public Ui::window
 public:
     TabWidget(QWebEngineProfile *profile, QWidget *parent = nullptr): QTabWidget(parent), m_profile(profile),ui(new Ui::window)
     {
+        //QWidget *m_window = new QWidget(nullptr);
         ui->setupUi(this);
+        //this->setCurrentWidget(m_window);
         //preview->load(QUrl("http://harrix.org/"));
         //ui->tab();
         setAttribute(Qt::WA_DeleteOnClose, true);
         QTabBar *tabBar = this->tabBar();
-        tabBar->resize(125,20);
+        //tabBar->resize(125,20);
             tabBar->setTabsClosable(true);
             tabBar->setSelectionBehaviorOnRemove(QTabBar::SelectPreviousTab);
             tabBar->setMovable(true);
@@ -114,7 +116,10 @@ public slots:
            }
 
     }
-    //WebView *currentWebView() const;
+    QWebEngineView *currentWebView() const
+    {
+        return webView(currentIndex());
+    }
     void setUrl(const QUrl &url){}
     //WebView *createTab();
     //WebView *createBackgroundTab();

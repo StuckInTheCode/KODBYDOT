@@ -31,6 +31,7 @@ private slots:
 private:
     Browser *m_browser;
     //QLineEdit *m_urlLineEdit;
+
     QWebEngineProfile *m_profile;
     QLinkedList<WebPage*> m_pages;
     //Ui::window *ui;
