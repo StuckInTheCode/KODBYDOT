@@ -31,6 +31,7 @@ public:
         //ui->tab();
         setAttribute(Qt::WA_DeleteOnClose, true);
         QTabBar *tabBar = this->tabBar();
+        //this->setTabBar();
         //tabBar->resize(125,20);
             tabBar->setTabsClosable(true);
             tabBar->setSelectionBehaviorOnRemove(QTabBar::SelectPreviousTab);
@@ -48,10 +49,10 @@ public:
             setDocumentMode(true);
             setElideMode(Qt::ElideRight);
             createTab();
-           // connect(this, &QTabWidget::currentChanged, this, &TabWidget::handleCurrentChanged);// !важно
+           // connect(this, &QTabWidget::currentChanged, this, &TabWidget::currentChanged);// !важно
     }
 
-    void handleCurrentChanged()
+    void currentChanged()
     {
 
         //int index = this->currentIndex();
@@ -87,7 +88,7 @@ public:
         //this->preview->
         //WebPage *webPage = new WebPage(m_profile, webView);
         //webView->setPage(webPage);
-        setupView(webView);
+        //setupView(webView);
         //ui->tabWidget->addTab(webView, tr("(Untitled)"));
         int index = addTab(webView, tr("(Untitled)"));
         //preview=webView;
@@ -140,12 +141,12 @@ private:
     {
         return qobject_cast<QWebEngineView*>(QTabWidget::widget(index));
     }
-    void setupView(QWebEngineView *webView)
+    /*void setupView(QWebEngineView *webView)
     {
        // QWebEnginePage *webPage = webView->page();
 
         //ui->preview->setPage(webPage);
-    }
+    }*/
     QWebEngineProfile *m_profile;
 };
 
