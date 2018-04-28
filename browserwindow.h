@@ -4,10 +4,13 @@
 #include <QMainWindow>
 #include <QWebEnginePage>
 #include <QLinkedList>
+#include <QPushButton>
+#include <QLineEdit>
 class WebPage;
 class Browser;
 class TabWidget;
-
+class CookieJar;
+class CookieManager;
 QT_END_NAMESPACE
 class BrowserWindow : public QMainWindow
 {
@@ -17,6 +20,7 @@ public:
     BrowserWindow(Browser *browser, QWebEngineProfile *profile);
     //WebView *currentTab() const;
     Browser *browser() { return m_browser; }
+    QWebEngineProfile *profile() { return m_profile;}
 private:
     QMenu *createFileMenu(TabWidget *tabWidget);
     QMenu *createEditMenu();
@@ -26,16 +30,20 @@ private:
     QToolBar *createToolBar();
 //public signals:
 
-private slots:
+public slots:
+    void load();
     void on_pushButton_clicked();
 private:
+    CookieJar *m_cookiejar;
+    CookieManager * m_cookiemanager;
     Browser *m_browser;
     //QLineEdit *m_urlLineEdit;
-
     QWebEngineProfile *m_profile;
     QLinkedList<WebPage*> m_pages;
     //Ui::window *ui;
     TabWidget *m_tabWidget;
+    QPushButton *m_button;
+    QLineEdit *m_urlLineEdit;
 };
 
 #endif // BROWSERWINDOW_H

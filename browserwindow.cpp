@@ -53,6 +53,8 @@
 #include "downloadmanagerwidget.h"
 #include "tabwidget.h"
 #include "webview.h"
+#include "cookiejar.h"
+#include "cookiemanager.h"
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDesktopWidget>
@@ -66,12 +68,34 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 #include <QWebEngineProfile>
-
+#include <QHBoxLayout>
+#include <QPushButton>
 BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     : m_browser(browser)
     , m_profile(profile)
     , m_tabWidget(new TabWidget(profile, this))
+    , m_cookiejar ( new CookieJar(this, profile))
+    , m_cookiemanager( new CookieManager())
+    , m_button( new QPushButton(this) )
+    , m_urlLineEdit( new QLineEdit(this))
 {
+    //QPushButton *m_button =  new QPushButton(this);
+    //QLineEdit *m_urlLineEdit = new QLineEdit(this);
+
+    m_button->setText("GO");
+    QHBoxLayout *m_layout = new QHBoxLayout(this);
+
+    //m_layout->addItem(new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    //m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->setSpacing(0);
+
+    QWidget *w = new QWidget();
+    //QPalette p = w->palette();
+    //w->setPalette(p);
+    w->setLayout(m_layout);
+    m_layout->addWidget(m_urlLineEdit);
+    m_layout->addWidget(m_button);
+
     //ui->setupUi(this);
     //ui->preview->load(QUrl("http://harrix.org/"));
     setAttribute(Qt::WA_DeleteOnClose, true);
@@ -83,11 +107,14 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setSpacing(0);
     layout->setMargin(0);
+    layout->addWidget(w);
     layout->addWidget(m_tabWidget);
-
+    QPushButton *button = new QPushButton(mainWidget);
+    layout->addWidget(button);
     //mainWidget->setLayout(m_tabWidget);
     addToolBarBreak();
-    //connect(m_tabWidget->GO,&QPushButton::clicked, this, &BrowserWindow::on_pushButton_clicked);
+    connect(button,&QPushButton::clicked, this, &BrowserWindow::on_pushButton_clicked);
+    connect(m_button,&QPushButton::clicked, this, &BrowserWindow::load);
     mainWidget->setLayout(layout);
     setCentralWidget(mainWidget);
     //m_tabWidget->createTab();
@@ -96,9 +123,19 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
 
 void BrowserWindow:: on_pushButton_clicked()
 {
+
+    m_cookiemanager->LoadCookies(m_cookiejar);
+    m_cookiemanager->show();
     //m_pages.put(&(m_tabWidget->preview->page()));
     //m_pages.push_back();
     //m_pages.contains();
     //m_pages.removeOne()
+}
+void BrowserWindow::load()
+{
+    m_tabWidget->loadURL(QUrl(m_urlLineEdit->text()));
+    /*QWebEngineView *view = webView(currentIndex());
+
+    view->load(QUrl(ui->lineEdit->text()));*/
 }
 

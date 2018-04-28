@@ -5,9 +5,9 @@
 #include <QWebEnginePage>
 #include <QLineEdit>
 #include <QTabBar>
+#include "tabbar.h"
 #include "ui_window.h"
 #include "webview.h"
-
 class QUrl;
 
 QT_BEGIN_NAMESPACE
@@ -25,12 +25,19 @@ public:
     TabWidget(QWebEngineProfile *profile, QWidget *parent = nullptr): QTabWidget(parent), m_profile(profile),ui(new Ui::window)
     {
         //QWidget *m_window = new QWidget(nullptr);
-        ui->setupUi(this);
+        //ui->setupUi(this);
         //this->setCurrentWidget(m_window);
         //preview->load(QUrl("http://harrix.org/"));
         //ui->tab();
         setAttribute(Qt::WA_DeleteOnClose, true);
+
         QTabBar *tabBar = this->tabBar();
+
+        //this->setSizeIncrement(1,5);
+        //this->show();
+
+        //TabBar * tabBar = new TabBar(this->tabBar());
+        //this->setTabBar(tabBar);
         //this->setTabBar();
         //tabBar->resize(125,20);
             tabBar->setTabsClosable(true);
@@ -43,9 +50,8 @@ public:
                 if (index == -1)
                     createTab();
             });
-            connect(ui->GO,&QPushButton::clicked, this, &TabWidget::load);
+            //connect(ui->GO,&QPushButton::clicked, this, &TabWidget::load);
             //QPushButton * newtab = ui->pushButton;
-            connect(this->ui->pushButton, &QPushButton::clicked, this, &TabWidget::createTab);
             setDocumentMode(true);
             setElideMode(Qt::ElideRight);
             createTab();
@@ -64,6 +70,7 @@ public:
         //setupView(webView(index));
         //this->preview = webView(index);
     }
+
     void load()
     {
         QWebEngineView *view = webView(currentIndex());
@@ -72,6 +79,11 @@ public:
        // webView->load(QUrl(ui->lineEdit->text()));
        //this->preview->close();
        //ui->preview->load(QUrl(ui->lineEdit->text()));
+    }
+    void loadURL(QUrl url)
+    {
+        QWebEngineView *view = webView(currentIndex());
+        view->load(url);
     }
 
     QWebEngineView* createTab()
@@ -104,6 +116,7 @@ public:
 signals:
 
 public slots:
+
     void closeTab(int index)
     {
         if (QWebEngineView *view = webView(index)) {
