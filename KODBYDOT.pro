@@ -22,7 +22,13 @@ SOURCES += \
     browser.cpp \
     browserwindow.cpp \
     webview.cpp \
-    downloadmanagerwidget.cpp
+    downloadmanagerwidget.cpp \
+    cookiejar.cpp \
+    urlinterceptor.cpp \
+    securesocketsmanager.cpp \
+    cookiemanager.cpp \
+    tabbar.cpp \
+    history.cpp
 
 HEADERS += \
     browser.h \
@@ -32,7 +38,18 @@ HEADERS += \
     tabwidget.h \
     webpage.h \
     webpopupwindow.h \
-    webview.h
+    webview.h \
+    cookiejar.h \
+    urlinterceptor.h \
+    securesocketsmanager.h \
+    cookiemanager.h \
+    tabbar.h \
+    history.h
 
 FORMS += \
-    window.ui
+    window.ui \
+    cookiejar.ui \
+    cookiemanager.ui \
+    cookiedialog.ui \
+    search.ui \
+    sslerror.ui

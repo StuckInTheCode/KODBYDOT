@@ -80,10 +80,17 @@ public:
        //this->preview->close();
        //ui->preview->load(QUrl(ui->lineEdit->text()));
     }
-    void loadURL(QUrl url)
+    bool loadURL(QUrl url)
     {
         QWebEngineView *view = webView(currentIndex());
-        view->load(url);
+        //view->load(url);
+        view->setUrl(url);
+        //bool correctRequest = 1?view->page()->
+        /*if(!correctRequest)
+        {
+            return true;
+        }*/
+        return false;
     }
 
     QWebEngineView* createTab()
@@ -114,7 +121,7 @@ public:
     }
 
 signals:
-
+void urlChanged(const QUrl &url);
 public slots:
 
     void closeTab(int index)

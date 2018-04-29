@@ -113,6 +113,9 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     layout->addWidget(button);
     //mainWidget->setLayout(m_tabWidget);
     addToolBarBreak();
+    //connect(m_tabWidget, &TabWidget::urlChanged, [this](const QUrl &url) {
+    //    m_urlLineEdit->setText(url.toDisplayString());
+   // });
     connect(button,&QPushButton::clicked, this, &BrowserWindow::on_pushButton_clicked);
     connect(m_button,&QPushButton::clicked, this, &BrowserWindow::load);
     mainWidget->setLayout(layout);
@@ -133,7 +136,13 @@ void BrowserWindow:: on_pushButton_clicked()
 }
 void BrowserWindow::load()
 {
-    m_tabWidget->loadURL(QUrl(m_urlLineEdit->text()));
+
+    m_tabWidget->loadURL(QUrl::fromUserInput(m_urlLineEdit->text()));
+    m_urlLineEdit->setText(m_tabWidget->currentWebView()->url().toDisplayString());
+    /*{
+        m_urlLineEdit->setText("incorrect path");
+    }*/
+
     /*QWebEngineView *view = webView(currentIndex());
 
     view->load(QUrl(ui->lineEdit->text()));*/
