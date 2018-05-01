@@ -1,7 +1,8 @@
 #include "browser.h"
 #include "browserwindow.h"
 #include <QWebEngineProfile>
-Browser::Browser()
+Browser::Browser():
+     m_history(0)
 {
     QObject::connect(
         QWebEngineProfile::defaultProfile(), &QWebEngineProfile::downloadRequested,

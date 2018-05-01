@@ -11,6 +11,7 @@ class Browser;
 class TabWidget;
 class CookieJar;
 class CookieManager;
+class History;
 QT_END_NAMESPACE
 class BrowserWindow : public QMainWindow
 {
@@ -20,6 +21,7 @@ public:
     BrowserWindow(Browser *browser, QWebEngineProfile *profile);
     //WebView *currentTab() const;
     Browser *browser() { return m_browser; }
+    History *history();
     QWebEngineProfile *profile() { return m_profile;}
 private:
     QMenu *createFileMenu(TabWidget *tabWidget);
@@ -34,9 +36,9 @@ public slots:
     void load();
     void on_pushButton_clicked();
 private:
+    Browser *m_browser;
     CookieJar *m_cookiejar;
     CookieManager * m_cookiemanager;
-    Browser *m_browser;
     //QLineEdit *m_urlLineEdit;
     QWebEngineProfile *m_profile;
     QLinkedList<WebPage*> m_pages;

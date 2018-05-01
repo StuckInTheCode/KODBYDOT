@@ -55,6 +55,7 @@
 #include "webview.h"
 #include "cookiejar.h"
 #include "cookiemanager.h"
+#include "history.h"
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDesktopWidget>
@@ -148,3 +149,7 @@ void BrowserWindow::load()
     view->load(QUrl(ui->lineEdit->text()));*/
 }
 
+History *BrowserWindow::history()
+{
+    return m_browser->m_history;
+}

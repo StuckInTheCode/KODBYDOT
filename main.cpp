@@ -11,7 +11,7 @@ int main(int argc, char **argv)
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     QApplication app(argc, argv);
-     QWebEngineSettings::defaultSettings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
+    QWebEngineSettings::defaultSettings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
     Browser browser;
     BrowserWindow *window = browser.createWindow();
     //BrowserWindow *window2 = browser.createWindow();

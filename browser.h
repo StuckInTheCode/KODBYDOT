@@ -56,15 +56,17 @@
 #include "downloadmanagerwidget.h"
 
 class BrowserWindow;
-
+class History;
 class Browser
 {
 public:
     Browser();
     QVector<BrowserWindow*> windows() { return mWindows; }
     BrowserWindow *createWindow();
+    History* m_history;
 private:
     QVector<BrowserWindow*> mWindows;
     DownloadManagerWidget m_downloadManagerWidget;
+
 };
 #endif // BROWSER_H
