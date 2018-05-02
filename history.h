@@ -5,7 +5,7 @@
 #include <QList>
 #include <QDateTime>
 #include <QUrl>
-
+#include <QWebEngineView>
 //#include "qzcommon.h"
 
 class QIcon;
@@ -32,7 +32,7 @@ public:
 
     HistoryModel* model();
 
-    void addHistoryEntry(WebView* view);
+    void addHistoryEntry(QWebEngineView* view);
     void addHistoryEntry(const QUrl &url, QString title);
 
     void deleteHistoryEntry(int index);

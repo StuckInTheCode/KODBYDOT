@@ -8,7 +8,7 @@
 #include "webview.h"
 //#include <QSqlQuery>
 #include <QWebEngineProfile>
-
+#include <QSettings>
 History::History(QObject* parent)
     : QObject(parent)
     , m_isSaving(true)
@@ -22,20 +22,25 @@ HistoryModel* History::model()
     if (!m_model) {
         m_model = new HistoryModel(this);
     }
-
+    //return new HistoryModel(this);
     return m_model;
-}
+ }
 
 void History::loadSettings()
 {
+    QSettings settings;
+    settings.beginGroup("Web-Browser-Settings");
+    m_isSaving = settings.value("allowHistory", true).toBool();
+    settings.endGroup();
     /*Settings settings;
     settings.beginGroup("Web-Browser-Settings");
     m_isSaving = settings.value("allowHistory", true).toBool();
     settings.endGroup();*/
+    //m_isSaving=true;
 }
 
 // AddHistoryEntry
-void History::addHistoryEntry(WebView* view)
+void History::addHistoryEntry(QWebEngineView* view)
 {
     if (!m_isSaving) {
         return;
@@ -53,13 +58,13 @@ void History::addHistoryEntry(const QUrl &url, QString title)
         return;
     }
 
-    /*const QStringList schemes = {
-        QSL("http"), QSL("https"), QSL("ftp"), QSL("file")
-    };*/
+    const QStringList schemes = {
+        "http", "https", "ftp", "file"
+    };
 
-    /*if (!schemes.contains(url.scheme())) {
+    if (!schemes.contains(url.scheme())) {
         return;
-    }*/
+    }
 
     if (title.isEmpty()) {
         title = tr("Empty Page");
@@ -230,9 +235,10 @@ QVector<HistoryEntry> History::mostVisited(int count)
 void History::clearHistory()
 {
     QSqlQuery query(SqlDatabase::instance()->database());
+    query.prepare(QString("DELETE FROM history"));
+    query.exec();
     //query.exec(QSL("DELETE FROM history"));
     //query.exec(QSL("VACUUM"));
-
     //mApp->webProfile()->clearAllVisitedLinks();
 
     emit resetHistory();
