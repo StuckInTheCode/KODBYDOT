@@ -56,6 +56,8 @@
 #include "cookiejar.h"
 #include "cookiemanager.h"
 #include "history.h"
+#include "historymanager.h"
+#include "toolbarsearch.h"
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDesktopWidget>
@@ -79,6 +81,7 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     , m_cookiemanager( new CookieManager())
     , m_button( new QPushButton(this) )
     , m_urlLineEdit( new QLineEdit(this))
+    , m_search( new ToolbarSearch(this))
 {
     //QPushButton *m_button =  new QPushButton(this);
     //QLineEdit *m_urlLineEdit = new QLineEdit(this);
@@ -86,15 +89,17 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     m_button->setText("GO");
     QHBoxLayout *m_layout = new QHBoxLayout(this);
 
+    menuBar()->addMenu(createFileMenu(m_tabWidget));
     //m_layout->addItem(new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding));
     //m_layout->setContentsMargins(0, 0, 0, 0);
-    m_layout->setSpacing(0);
-
+    m_layout->setSpacing(10);
+    m_search->setFixedWidth(300);
     QWidget *w = new QWidget();
     //QPalette p = w->palette();
     //w->setPalette(p);
     w->setLayout(m_layout);
     m_layout->addWidget(m_urlLineEdit);
+    m_layout->addWidget(m_search);
     m_layout->addWidget(m_button);
 
     //ui->setupUi(this);
@@ -119,6 +124,8 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
    // });
     connect(button,&QPushButton::clicked, this, &BrowserWindow::on_pushButton_clicked);
     connect(m_button,&QPushButton::clicked, this, &BrowserWindow::load);
+    connect(m_search, SIGNAL(search(QUrl)), SLOT(loadURL(QUrl)));
+    //connect(m_search,&ToolbarSearch::search(QUrl),this,(QUrl)->{m_tabWidget->loadURL(QUrl))};
     mainWidget->setLayout(layout);
     setCentralWidget(mainWidget);
     //m_tabWidget->createTab();
@@ -128,8 +135,16 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
 void BrowserWindow:: on_pushButton_clicked()
 {
 
-    m_cookiemanager->LoadCookies(m_cookiejar);
-    m_cookiemanager->show();
+    //m_cookiemanager->LoadCookies(m_cookiejar);
+    //m_cookiemanager->show();
+
+    HistoryManager * manager = new HistoryManager(this);
+    manager->show();
+    manager->setMainWindow(this);
+
+    manager->raise();
+    manager->activateWindow();
+    //manager->show();
     //m_pages.put(&(m_tabWidget->preview->page()));
     //m_pages.push_back();
     //m_pages.contains();
@@ -138,8 +153,13 @@ void BrowserWindow:: on_pushButton_clicked()
 void BrowserWindow::load()
 {
 
-    m_tabWidget->loadURL(QUrl::fromUserInput(m_urlLineEdit->text()));
+    //m_tabWidget->loadURL(QUrl::fromUserInput(m_urlLineEdit->text()));
+    //if(!url)
+       m_tabWidget->loadURL(QUrl::fromUserInput(m_urlLineEdit->text()));
+    //else
+    //    m_tabWidget->loadURL(url);
     m_urlLineEdit->setText(m_tabWidget->currentWebView()->url().toDisplayString());
+    history()->addHistoryEntry(m_tabWidget->currentWebView());
     /*{
         m_urlLineEdit->setText("incorrect path");
     }*/
@@ -147,6 +167,48 @@ void BrowserWindow::load()
     /*QWebEngineView *view = webView(currentIndex());
 
     view->load(QUrl(ui->lineEdit->text()));*/
+}
+void BrowserWindow::loadURL(QUrl url)
+{
+    if (!url.isValid())
+        return;
+    m_urlLineEdit->setText(url.toDisplayString());
+    m_tabWidget->loadURL(url);
+}
+
+QMenu *BrowserWindow::createFileMenu(TabWidget *tabWidget)
+{
+    QMenu *fileMenu = new QMenu(tr("&File"));
+    //fileMenu->addAction(tr("&New Window"), this, &BrowserWindow::handleNewWindowTriggered, QKeySequence::New);
+    //fileMenu->addAction(tr("New &Incognito Window"), this, &BrowserWindow::handleNewIncognitoWindowTriggered);
+
+    QAction *newTabAction = new QAction(tr("New &Tab"), this);
+    newTabAction->setShortcuts(QKeySequence::AddTab);
+    connect(newTabAction, &QAction::triggered, tabWidget, &TabWidget::createTab);
+    fileMenu->addAction(newTabAction);
+
+    //fileMenu->addAction(tr("&Open File..."), this, &BrowserWindow::handleFileOpenTriggered, QKeySequence::Open);
+    fileMenu->addSeparator();
+
+    QAction *closeTabAction = new QAction(tr("&Close Tab"), this);
+    closeTabAction->setShortcuts(QKeySequence::Close);
+    connect(closeTabAction, &QAction::triggered, [tabWidget]() {
+        tabWidget->closeTab(tabWidget->currentIndex());
+    });
+    fileMenu->addAction(closeTabAction);
+
+    QAction *closeAction = new QAction(tr("&Quit"),this);
+    closeAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Q));
+    connect(closeAction, &QAction::triggered, this, &QWidget::close);
+    fileMenu->addAction(closeAction);
+
+    connect(fileMenu, &QMenu::aboutToShow, [this, closeAction]() {
+        if (m_browser->windows().count() == 1)
+            closeAction->setText(tr("&Quit"));
+        else
+            closeAction->setText(tr("&Close Window"));
+    });
+    return fileMenu;
 }
 
 History *BrowserWindow::history()

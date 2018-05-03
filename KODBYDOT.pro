@@ -1,4 +1,4 @@
-QT += core gui
+QT += core gui sql
 QT += webenginewidgets
 CONFIG += c++11
 
@@ -28,7 +28,14 @@ SOURCES += \
     securesocketsmanager.cpp \
     cookiemanager.cpp \
     tabbar.cpp \
-    history.cpp
+    history.cpp \
+    historytree.cpp \
+    historymodel.cpp \
+    historyitem.cpp \
+    sqldatabase.cpp \
+    historymanager.cpp \
+    historytreeview.cpp \
+    toolbarsearch.cpp
 
 HEADERS += \
     browser.h \
@@ -44,7 +51,14 @@ HEADERS += \
     securesocketsmanager.h \
     cookiemanager.h \
     tabbar.h \
-    history.h
+    history.h \
+    historytree.h \
+    historymodel.h \
+    historyitem.h \
+    sqldatabase.h \
+    historymanager.h \
+    historytreeview.h \
+    toolbarsearch.h
 
 FORMS += \
     window.ui \
@@ -52,4 +66,6 @@ FORMS += \
     cookiemanager.ui \
     cookiedialog.ui \
     search.ui \
-    sslerror.ui
+    sslerror.ui \
+    history.ui \
+    historymanager.ui

@@ -12,6 +12,7 @@ class TabWidget;
 class CookieJar;
 class CookieManager;
 class History;
+class ToolbarSearch;
 QT_END_NAMESPACE
 class BrowserWindow : public QMainWindow
 {
@@ -34,6 +35,7 @@ private:
 
 public slots:
     void load();
+    void loadURL(QUrl url);
     void on_pushButton_clicked();
 private:
     Browser *m_browser;
@@ -43,6 +45,7 @@ private:
     QWebEngineProfile *m_profile;
     QLinkedList<WebPage*> m_pages;
     //Ui::window *ui;
+    ToolbarSearch * m_search;
     TabWidget *m_tabWidget;
     QPushButton *m_button;
     QLineEdit *m_urlLineEdit;
