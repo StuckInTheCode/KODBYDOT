@@ -37,6 +37,7 @@ public slots:
     void load();
     void loadURL(QUrl url);
     void on_pushButton_clicked();
+    void urlChanged(const QUrl &url);
 private:
     Browser *m_browser;
     CookieJar *m_cookiejar;

@@ -1,8 +1,10 @@
-#ifndef TABWIDGET_H
+ #ifndef TABWIDGET_H
 #define TABWIDGET_H
 
 #include <QTabWidget>
+#include <QHBoxLayout>
 #include <QWebEnginePage>
+#include <QToolButton>
 #include <QLineEdit>
 #include <QTabBar>
 #include "tabbar.h"
@@ -32,7 +34,6 @@ public:
         setAttribute(Qt::WA_DeleteOnClose, true);
 
         QTabBar *tabBar = this->tabBar();
-
         //this->setSizeIncrement(1,5);
         //this->show();
 
@@ -40,6 +41,14 @@ public:
         //this->setTabBar(tabBar);
         //this->setTabBar();
         //tabBar->resize(125,20);
+        QToolButton * button = new QToolButton(this);
+        button->setText("+");
+        //this->setTabOrder();
+        this->setCornerWidget(button);
+        //QHBoxLayout * lay= new QHBoxLayout();
+        //tabBar->setLayout(lay);
+        //lay->addWidget(button);
+        //tabBar->setTabButton(0,QTabBar::ButtonPosition::LeftSide ,button);
             tabBar->setTabsClosable(true);
             tabBar->setSelectionBehaviorOnRemove(QTabBar::SelectPreviousTab);
             tabBar->setMovable(true);
@@ -50,25 +59,42 @@ public:
                 if (index == -1)
                     createTab();
             });
+
+            connect(this, &QTabWidget::currentChanged, this, &TabWidget::handleCurrentChanged);
             //connect(ui->GO,&QPushButton::clicked, this, &TabWidget::load);
             //QPushButton * newtab = ui->pushButton;
+
             setDocumentMode(true);
             setElideMode(Qt::ElideRight);
+            //tabBar->set
             createTab();
            // connect(this, &QTabWidget::currentChanged, this, &TabWidget::currentChanged);// !важно
     }
 
-    void currentChanged()
+    void TabWidget::handleCurrentChanged(int index)
     {
-
-        //int index = this->currentIndex();
-        //if(index<count())
-        //setCurrentIndex(index+1);
-        //this->preview->setPage(webView(index)->page());
-        //this->preview->se
-        //setCurrentWidget(webView(index));
-        //setupView(webView(index));
-        //this->preview = webView(index);
+        if (index != -1) {
+            QWebEngineView *view = webView(index);
+            if (!view->url().isEmpty())
+                view->setFocus();
+            emit titleChanged(view->title());
+            //emit loadProgress(view->loadProgress());
+            emit urlChanged(view->url());
+            //emit IconChanged(view->favIcon());
+            /*emit webActionEnabledChanged(QWebEnginePage::Back, view->isWebActionEnabled(QWebEnginePage::Back));
+            emit webActionEnabledChanged(QWebEnginePage::Forward, view->isWebActionEnabled(QWebEnginePage::Forward));
+            emit webActionEnabledChanged(QWebEnginePage::Stop, view->isWebActionEnabled(QWebEnginePage::Stop));
+            emit webActionEnabledChanged(QWebEnginePage::Reload,view->isWebActionEnabled(QWebEnginePage::Reload));
+        */} else {
+            emit titleChanged(QString());
+            //emit loadProgress(0);
+            emit urlChanged(QUrl());
+            //emit IconChanged(QIcon());
+            /*emit webActionEnabledChanged(QWebEnginePage::Back, false);
+            emit webActionEnabledChanged(QWebEnginePage::Forward, false);
+            emit webActionEnabledChanged(QWebEnginePage::Stop, false);
+            emit webActionEnabledChanged(QWebEnginePage::Reload, true);
+        */}
     }
 
     void load()
@@ -96,6 +122,39 @@ public:
     QWebEngineView* createTab()
     {
         QWebEngineView *webView = createBackgroundTab();
+        connect(webView, &QWebEngineView::titleChanged, [this, webView](const QString &title) {
+            int index = indexOf(webView);
+            if (index != -1) {
+                setTabText(index, title);
+                setTabToolTip(index, title);
+            }
+            if (currentIndex() == index)
+                emit titleChanged(title);
+        });
+        connect(webView, &QWebEngineView::urlChanged, [this, webView](const QUrl &url) {
+            int index = indexOf(webView);
+            if (index != -1)
+                tabBar()->setTabData(index, url);
+            if (currentIndex() == index)
+                emit urlChanged(url);
+        });
+        /*connect(webView, &WebView::favIconChanged, [this, webView](const QIcon &icon) {
+            int index = indexOf(webView);
+            if (index != -1)
+                setTabIcon(index, icon);
+            if (currentIndex() == index)
+                emit favIconChanged(icon);
+        });
+        connect(this, &QWebEngineView::iconChanged, [this](const QIcon &) {
+            emit favIconChanged(favIcon());
+        });*/
+        connect(webView, &QWebEngineView::iconChanged, [this, webView](const QIcon &icon) {
+                    int index = indexOf(webView);
+                    //if (index != -1)
+                        setTabIcon(index, icon);
+                    //if (currentIndex() == index)
+                    //    emit favIconChanged(icon);
+                });
         setCurrentWidget(webView);
         return webView;
     }
@@ -109,7 +168,9 @@ public:
         //webView->setPage(webPage);
         //setupView(webView);
         //ui->tabWidget->addTab(webView, tr("(Untitled)"));
-        int index = addTab(webView, tr("(Untitled)"));
+
+        int index = addTab(webView, tr("    "));
+
         //preview=webView;
         //setTabIcon(index, webView->favIcon());
         //Workaround for QTBUG-61770
@@ -121,6 +182,7 @@ public:
     }
 
 signals:
+void titleChanged(const QString &title);
 void urlChanged(const QUrl &url);
 public slots:
 

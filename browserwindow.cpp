@@ -85,7 +85,7 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
 {
     //QPushButton *m_button =  new QPushButton(this);
     //QLineEdit *m_urlLineEdit = new QLineEdit(this);
-
+    //m_urlLineEdit->setAlignment(Qt::AlignLeft);
     m_button->setText("GO");
     QHBoxLayout *m_layout = new QHBoxLayout(this);
 
@@ -125,13 +125,17 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     connect(button,&QPushButton::clicked, this, &BrowserWindow::on_pushButton_clicked);
     connect(m_button,&QPushButton::clicked, this, &BrowserWindow::load);
     connect(m_search, SIGNAL(search(QUrl)), SLOT(loadURL(QUrl)));
+    connect(m_tabWidget,&TabWidget::urlChanged,this,&BrowserWindow::urlChanged);
     //connect(m_search,&ToolbarSearch::search(QUrl),this,(QUrl)->{m_tabWidget->loadURL(QUrl))};
     mainWidget->setLayout(layout);
     setCentralWidget(mainWidget);
     //m_tabWidget->createTab();
 
 }
-
+void BrowserWindow::urlChanged(const QUrl &url)
+{
+    m_urlLineEdit->setText(url.toDisplayString());
+}
 void BrowserWindow:: on_pushButton_clicked()
 {
 

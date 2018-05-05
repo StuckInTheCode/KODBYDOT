@@ -240,7 +240,7 @@ void History::clearHistory()
     //query.exec(QSL("DELETE FROM history"));
     //query.exec(QSL("VACUUM"));
     //mApp->webProfile()->clearAllVisitedLinks();
-
+    //QWebEngineProfile::clearVisitedLinks();
     emit resetHistory();
 }
 
