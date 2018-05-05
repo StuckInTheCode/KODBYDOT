@@ -10,6 +10,7 @@
 #include "tabbar.h"
 #include "ui_window.h"
 #include "webview.h"
+#include "webpage.h"
 class QUrl;
 
 QT_BEGIN_NAMESPACE
@@ -32,6 +33,7 @@ public:
         //preview->load(QUrl("http://harrix.org/"));
         //ui->tab();
         setAttribute(Qt::WA_DeleteOnClose, true);
+
 
         QTabBar *tabBar = this->tabBar();
         //this->setSizeIncrement(1,5);
@@ -164,8 +166,8 @@ public:
         QWebEngineView * webView= new QWebEngineView(nullptr);
 
         //this->preview->
-        //WebPage *webPage = new WebPage(m_profile, webView);
-        //webView->setPage(webPage);
+        WebPage *webPage = new WebPage(m_profile, webView);
+        webView->setPage(webPage);
         //setupView(webView);
         //ui->tabWidget->addTab(webView, tr("(Untitled)"));
 

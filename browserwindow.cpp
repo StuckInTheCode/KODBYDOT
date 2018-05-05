@@ -58,8 +58,12 @@
 #include "history.h"
 #include "historymanager.h"
 #include "toolbarsearch.h"
+#include "savepagedialog.h"
+#include "webview.h"
+#include "settings.h"
 #include <QApplication>
 #include <QCloseEvent>
+#include <QAction>
 #include <QDesktopWidget>
 #include <QEvent>
 #include <QFileDialog>
@@ -88,8 +92,9 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     //m_urlLineEdit->setAlignment(Qt::AlignLeft);
     m_button->setText("GO");
     QHBoxLayout *m_layout = new QHBoxLayout(this);
-
     menuBar()->addMenu(createFileMenu(m_tabWidget));
+    menuBar()->addMenu(createViewMenu());
+    menuBar()->addMenu(createOptionsMenu());
     //m_layout->addItem(new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding));
     //m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(10);
@@ -141,13 +146,15 @@ void BrowserWindow:: on_pushButton_clicked()
 
     //m_cookiemanager->LoadCookies(m_cookiejar);
     //m_cookiemanager->show();
-
+    //SavePageDialog dialog()
     HistoryManager * manager = new HistoryManager(this);
     manager->show();
     manager->setMainWindow(this);
 
     manager->raise();
     manager->activateWindow();
+
+
     //manager->show();
     //m_pages.put(&(m_tabWidget->preview->page()));
     //m_pages.push_back();
@@ -215,7 +222,107 @@ QMenu *BrowserWindow::createFileMenu(TabWidget *tabWidget)
     return fileMenu;
 }
 
-History *BrowserWindow::history()
+QMenu *BrowserWindow::createViewMenu()//QToolBar *toolbar
+{
+    QMenu *viewMenu = new QMenu(tr("&View"));
+    m_stopAction = viewMenu->addAction(tr("&Stop"));
+    QList<QKeySequence> shortcuts;
+    shortcuts.append(QKeySequence(Qt::CTRL | Qt::Key_Period));
+    shortcuts.append(Qt::Key_Escape);
+    m_stopAction->setShortcuts(shortcuts);
+    /*connect(m_stopAction, &QAction::triggered, [this]() {
+        m_tabWidget->triggerWebPageAction(QWebEnginePage::Stop);
+    });
+*/
+    m_reloadAction = viewMenu->addAction(tr("Reload Page"));
+    /*m_reloadAction->setShortcuts(QKeySequence::Refresh);
+    connect(m_reloadAction, &QAction::triggered, [this]() {
+        m_tabWidget->triggerWebPageAction(QWebEnginePage::Reload);
+    });*/
+
+    QAction *zoomIn = viewMenu->addAction(tr("Zoom &In"));
+    zoomIn->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Plus));
+    connect(zoomIn, &QAction::triggered, [this]() {
+        if (currentTab())
+            currentTab()->setZoomFactor(currentTab()->zoomFactor() + 0.1);
+    });
+
+    QAction *zoomOut = viewMenu->addAction(tr("Zoom &Out"));
+    zoomOut->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
+    connect(zoomOut, &QAction::triggered, [this]() {
+        if (currentTab())
+            currentTab()->setZoomFactor(currentTab()->zoomFactor() - 0.1);
+    });
+
+    QAction *resetZoom = viewMenu->addAction(tr("Reset &Zoom"));
+    resetZoom->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
+    connect(resetZoom, &QAction::triggered, [this]() {
+        if (currentTab())
+            currentTab()->setZoomFactor(1.0);
+    });
+
+
+    viewMenu->addSeparator();
+
+    QAction *viewStatusbarAction = new QAction(tr("Hide Status Bar"), this);
+    viewStatusbarAction->setShortcut(tr("Ctrl+/"));
+    connect(viewStatusbarAction, &QAction::triggered, [this, viewStatusbarAction]() {
+        if (statusBar()->isVisible()) {
+            viewStatusbarAction->setText(tr("Show Status Bar"));
+            statusBar()->close();
+        } else {
+            viewStatusbarAction->setText(tr("Hide Status Bar"));
+            statusBar()->show();
+        }
+    });
+    viewMenu->addAction(viewStatusbarAction);
+    return viewMenu;
+}
+
+QMenu *BrowserWindow::createOptionsMenu()
+{
+    QMenu *menu = new QMenu(tr("&Options"));
+
+    QAction *showHistory = new QAction(tr("History"), this);
+    connect(showHistory, &QAction::triggered, this, &BrowserWindow::on_pushButton_clicked);
+    menu->addAction(showHistory);
+
+    QAction *showSettings = new QAction(tr("Settings"), this);
+    connect(showSettings, &QAction::triggered, [this](){
+        Settings * settings = new Settings();
+        settings->show();
+    });
+    menu->addAction(showSettings);
+    /*connect(menu, &QMenu::aboutToShow, [this, menu, nextTabAction, previousTabAction]() {
+        menu->clear();
+        menu->addAction(nextTabAction);
+        menu->addAction(previousTabAction);
+        menu->addSeparator();
+
+        QVector<BrowserWindow*> windows = m_browser->windows();
+        int index(-1);
+        for (auto window : windows) {
+            QAction *action = menu->addAction(window->windowTitle(), this, &BrowserWindow::handleShowWindowTriggered);
+            action->setData(++index);
+            action->setCheckable(true);
+            if (window == this)
+                action->setChecked(true);
+        }
+    });*/
+    return menu;
+}
+
+History *BrowserWindow::history() const
 {
     return m_browser->m_history;
+}
+
+TabWidget *BrowserWindow::tabWidget() const
+{
+    return m_tabWidget;
+}
+
+WebView *BrowserWindow::currentTab() const
+{
+    return reinterpret_cast<WebView*>(m_tabWidget->currentWebView());
 }

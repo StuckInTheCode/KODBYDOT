@@ -62,13 +62,34 @@ class DownloadWidget final : public QFrame
 {
     Q_OBJECT
 public:
-    DownloadWidget(QWebEngineDownloadItem *download, QWidget *parent = nullptr);
+    DownloadWidget(QWebEngineDownloadItem *download, QWidget *parent = nullptr)
+        :QFrame(parent)
+       , m_download(download)
+       , m_timeAdded(QTime::currentTime())
+   {
+       /*setupUi(this);
+       m_dstName->setText(QFileInfo(m_download->path()).fileName());
+       m_srcUrl->setText(m_download->url().toDisplayString());
 
-    void removeClicked(DownloadWidget *self);
-    void updateWidget();
+       connect(m_cancelButton, &QPushButton::clicked,
+               [this](bool) {
+           if (m_download->state() == QWebEngineDownloadItem::DownloadInProgress)
+               m_download->cancel();
+           else
+               emit removeClicked(this);
+       });
+
+       connect(m_download, &QWebEngineDownloadItem::downloadProgress,
+               this, &DownloadWidget::updateWidget);
+
+       connect(m_download, &QWebEngineDownloadItem::stateChanged,
+               this, &DownloadWidget::updateWidget);
+
+       updateWidget();*/
+   }
+
 
 private:
-    QString withUnit(qreal bytes);
 
     QWebEngineDownloadItem *m_download;
     QTime m_timeAdded;

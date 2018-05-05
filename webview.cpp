@@ -25,13 +25,13 @@ QWebEngineView *WebView::createWindow(QWebEnginePage::WebWindowType type)
 
     switch (type) {
     case QWebEnginePage::WebBrowserTab: {
-        //return mainWindow->tabWidget()->createTab();
+        return mainWindow->tabWidget()->createTab();
     }
     case QWebEnginePage::WebBrowserBackgroundTab: {
-        //return mainWindow->tabWidget()->createBackgroundTab();
+        return mainWindow->tabWidget()->createBackgroundTab();
     }
     case QWebEnginePage::WebBrowserWindow: {
-        //return mainWindow->browser()->createWindow()->currentTab();
+        return mainWindow->browser()->createWindow()->currentTab();
     }
     case QWebEnginePage::WebDialog: {
         //WebPopupWindow *popup = new WebPopupWindow(page()->profile());

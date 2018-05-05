@@ -14,6 +14,7 @@ class WebView : public QWebEngineView
 public:
     WebView(QWidget *parent = nullptr);
     void setPage(WebPage *page);
+    //bool certificateError(const QWebEngineCertificateError &error) override;
     QWebEngineView *createWindow(QWebEnginePage::WebWindowType type) override; //изменяет виртуальную функцию, вызываемую внутри класса, таким образом создавая разные вариаты окон
 };
 

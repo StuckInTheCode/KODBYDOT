@@ -35,7 +35,9 @@ SOURCES += \
     sqldatabase.cpp \
     historymanager.cpp \
     historytreeview.cpp \
-    toolbarsearch.cpp
+    toolbarsearch.cpp \
+    savepagedialog.cpp \
+    settings.cpp
 
 HEADERS += \
     browser.h \
@@ -58,7 +60,9 @@ HEADERS += \
     sqldatabase.h \
     historymanager.h \
     historytreeview.h \
-    toolbarsearch.h
+    toolbarsearch.h \
+    savepagedialog.h \
+    settings.h
 
 FORMS += \
     window.ui \
@@ -68,4 +72,6 @@ FORMS += \
     search.ui \
     sslerror.ui \
     history.ui \
-    historymanager.ui
+    historymanager.ui \
+    savepagedialog.ui \
+    settings.ui
