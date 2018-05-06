@@ -1,22 +1,21 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <QWidget>
+#include <QtWidgets/QDialog>
+#include "ui_settings.h"
 
-namespace Ui {
-class Settings;
-}
-
-class Settings : public QWidget
+class Settings: public QDialog, public Ui_Settings
 {
     Q_OBJECT
 
 public:
-    explicit Settings(QWidget *parent = 0);
-    ~Settings();
+    Settings(QWidget *parent = 0);
+    void accept();
 
-private:
-    Ui::Settings *ui;
+private slots:
+    void loadDefaults();
+    void loadFromSettings();
+    void saveToSettings();
 };
 
 #endif // SETTINGS_H
