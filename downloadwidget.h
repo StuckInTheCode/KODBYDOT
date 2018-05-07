@@ -53,12 +53,15 @@
 
 #include <QFrame>
 #include <QTime>
+#include <QWebEngineDownloadItem>
+#include "ui_downloadwidget.h"
+#include <QFileInfo>
+#include <QUrl>
+//QT_BEGIN_NAMESPACE
+//class QWebEngineDownloadItem;
+//QT_END_NAMESPACE
 
-QT_BEGIN_NAMESPACE
-class QWebEngineDownloadItem;
-QT_END_NAMESPACE
-
-class DownloadWidget final : public QFrame
+class DownloadWidget final : public QFrame, Ui_DownloadWidget
 {
     Q_OBJECT
 public:
@@ -67,7 +70,7 @@ public:
        , m_download(download)
        , m_timeAdded(QTime::currentTime())
    {
-       /*setupUi(this);
+       setupUi(this);
        m_dstName->setText(QFileInfo(m_download->path()).fileName());
        m_srcUrl->setText(m_download->url().toDisplayString());
 
@@ -75,8 +78,8 @@ public:
                [this](bool) {
            if (m_download->state() == QWebEngineDownloadItem::DownloadInProgress)
                m_download->cancel();
-           else
-               emit removeClicked(this);
+           //else
+           //    emit removeClicked(this);
        });
 
        connect(m_download, &QWebEngineDownloadItem::downloadProgress,
@@ -85,8 +88,14 @@ public:
        connect(m_download, &QWebEngineDownloadItem::stateChanged,
                this, &DownloadWidget::updateWidget);
 
-       updateWidget();*/
+       //updateWidget();
    }
+    void updateWidget()
+    {
+        if(m_download->isFinished())
+            this->close();
+        //this->m_progressBar->
+    }
 
 
 private:

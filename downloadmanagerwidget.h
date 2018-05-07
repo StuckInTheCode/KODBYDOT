@@ -54,6 +54,7 @@
 #include <QWidget>
 #include <QFileDialog>
 #include <QWebEngineDownloadItem>
+#include <QVBoxLayout>
 
 QT_BEGIN_NAMESPACE
 class QWebEngineDownloadItem;
@@ -70,7 +71,7 @@ public:
 private:
     void add(DownloadWidget *downloadWidget);
     void remove(DownloadWidget *downloadWidget);
-
+    QVBoxLayout *m_itemsLayout;
     int m_numDownloads;
 };
 

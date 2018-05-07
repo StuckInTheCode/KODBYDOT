@@ -87,6 +87,8 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     , m_urlLineEdit( new QLineEdit(this))
     , m_search( new ToolbarSearch(this))
 {
+    m_cookiemanager->LoadCookies(m_cookiejar);
+    connect(m_cookiejar, &CookieJar::cookieAdded, m_cookiemanager, &CookieManager::addCookie);
     //QPushButton *m_button =  new QPushButton(this);
     //QLineEdit *m_urlLineEdit = new QLineEdit(this);
     //m_urlLineEdit->setAlignment(Qt::AlignLeft);
@@ -120,14 +122,14 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     layout->setMargin(0);
     layout->addWidget(w);
     layout->addWidget(m_tabWidget);
-    QPushButton *button = new QPushButton(mainWidget);
-    layout->addWidget(button);
+    //QPushButton *button = new QPushButton(mainWidget);
+    //layout->addWidget(button);
     //mainWidget->setLayout(m_tabWidget);
     addToolBarBreak();
     //connect(m_tabWidget, &TabWidget::urlChanged, [this](const QUrl &url) {
     //    m_urlLineEdit->setText(url.toDisplayString());
    // });
-    connect(button,&QPushButton::clicked, this, &BrowserWindow::on_pushButton_clicked);
+    //connect(button,&QPushButton::clicked, this, &BrowserWindow::on_pushButton_clicked);
     connect(m_button,&QPushButton::clicked, this, &BrowserWindow::load);
     connect(m_search, SIGNAL(search(QUrl)), SLOT(loadURL(QUrl)));
     connect(m_tabWidget,&TabWidget::urlChanged,this,&BrowserWindow::urlChanged);
@@ -201,6 +203,15 @@ QMenu *BrowserWindow::createFileMenu(TabWidget *tabWidget)
     //fileMenu->addAction(tr("&Open File..."), this, &BrowserWindow::handleFileOpenTriggered, QKeySequence::Open);
     fileMenu->addSeparator();
 
+    QAction *savePage = new QAction(tr("&Save page"), this);
+    connect(savePage, &QAction::triggered, [this]() {
+        SavePageDialog * dialog = new SavePageDialog(nullptr,QWebEngineDownloadItem::SavePageFormat::UnknownSaveFormat,this->currentTab());
+        dialog->exec();
+        //this->currentTab()->page()->save(nullptr);
+        //tabWidget->closeTab(tabWidget->currentIndex());
+    });
+    fileMenu->addAction(savePage);
+
     QAction *closeTabAction = new QAction(tr("&Close Tab"), this);
     closeTabAction->setShortcuts(QKeySequence::Close);
     connect(closeTabAction, &QAction::triggered, [tabWidget]() {
@@ -262,7 +273,7 @@ QMenu *BrowserWindow::createViewMenu()//QToolBar *toolbar
     });
 
 
-    viewMenu->addSeparator();
+    /*viewMenu->addSeparator();
 
     QAction *viewStatusbarAction = new QAction(tr("Hide Status Bar"), this);
     viewStatusbarAction->setShortcut(tr("Ctrl+/"));
@@ -275,7 +286,7 @@ QMenu *BrowserWindow::createViewMenu()//QToolBar *toolbar
             statusBar()->show();
         }
     });
-    viewMenu->addAction(viewStatusbarAction);
+    viewMenu->addAction(viewStatusbarAction);*/
     return viewMenu;
 }
 
@@ -284,8 +295,17 @@ QMenu *BrowserWindow::createOptionsMenu()
     QMenu *menu = new QMenu(tr("&Options"));
 
     QAction *showHistory = new QAction(tr("History"), this);
-    connect(showHistory, &QAction::triggered, this, &BrowserWindow::on_pushButton_clicked);
+    connect(showHistory, &QAction::triggered, this, [this](){
+        HistoryManager * manager = new HistoryManager(this);
+        manager->show();
+    });
     menu->addAction(showHistory);
+
+    QAction *showCookie = new QAction(tr("Cookie"), this);
+    connect(showCookie, &QAction::triggered, this, [this](){
+        m_cookiemanager->show();
+    });
+    menu->addAction(showCookie);
 
     QAction *showSettings = new QAction(tr("Settings"), this);
     connect(showSettings, &QAction::triggered, [this](){

@@ -7,12 +7,14 @@
 #include <QPushButton>
 #include <QLineEdit>
 class WebPage;
+class WebView;
 class Browser;
 class TabWidget;
 class CookieJar;
 class CookieManager;
 class History;
 class ToolbarSearch;
+class QAction;
 QT_END_NAMESPACE
 class BrowserWindow : public QMainWindow
 {
@@ -21,14 +23,17 @@ class BrowserWindow : public QMainWindow
 public:
     BrowserWindow(Browser *browser, QWebEngineProfile *profile);
     //WebView *currentTab() const;
-    Browser *browser() { return m_browser; }
-    History *history();
+    TabWidget *tabWidget() const;
+    WebView *currentTab() const;
+    Browser *browser(){ return m_browser; }
+    History *history() const;
     QWebEngineProfile *profile() { return m_profile;}
 private:
     QMenu *createFileMenu(TabWidget *tabWidget);
     QMenu *createEditMenu();
-    QMenu *createViewMenu(QToolBar *toolBar);
+    QMenu *createViewMenu(); //QToolBar *toolBar
     QMenu *createWindowMenu(TabWidget *tabWidget);
+    QMenu *createOptionsMenu();
     QMenu *createHelpMenu();
     QToolBar *createToolBar();
 //public signals:
@@ -39,6 +44,8 @@ public slots:
     void on_pushButton_clicked();
     void urlChanged(const QUrl &url);
 private:
+    QAction *m_stopAction;
+    QAction *m_reloadAction;
     Browser *m_browser;
     CookieJar *m_cookiejar;
     CookieManager * m_cookiemanager;

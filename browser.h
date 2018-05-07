@@ -54,7 +54,7 @@
 #include <QVector>
 #include <QWebEngineProfile>
 #include "downloadmanagerwidget.h"
-
+#include "urlinterceptor.h"
 class BrowserWindow;
 class History;
 class Browser
@@ -67,6 +67,7 @@ public:
 private:
     QVector<BrowserWindow*> mWindows;
     DownloadManagerWidget m_downloadManagerWidget;
-
+    NetworkUrlInterceptor * m_urlInterceptor;
+    QWebEngineProfile * profile;
 };
 #endif // BROWSER_H

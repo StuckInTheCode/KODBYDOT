@@ -25,9 +25,7 @@ SOURCES += \
     downloadmanagerwidget.cpp \
     cookiejar.cpp \
     urlinterceptor.cpp \
-    securesocketsmanager.cpp \
     cookiemanager.cpp \
-    tabbar.cpp \
     history.cpp \
     historytree.cpp \
     historymodel.cpp \
@@ -50,9 +48,7 @@ HEADERS += \
     webview.h \
     cookiejar.h \
     urlinterceptor.h \
-    securesocketsmanager.h \
     cookiemanager.h \
-    tabbar.h \
     history.h \
     historytree.h \
     historymodel.h \
@@ -74,4 +70,5 @@ FORMS += \
     history.ui \
     historymanager.ui \
     savepagedialog.ui \
-    settings.ui
+    settings.ui \
+    downloadwidget.ui
