@@ -41,7 +41,8 @@ private:
 public slots:
     void load();
     void loadURL(QUrl url);
-    void on_pushButton_clicked();
+    void addToBookmarks();
+    // void on_pushButton_clicked();
     void urlChanged(const QUrl &url);
 private:
     QAction *m_stopAction;
@@ -56,6 +57,7 @@ private:
     ToolbarSearch * m_search;
     TabWidget *m_tabWidget;
     QPushButton *m_button;
+    QPushButton *m_bookmark;
     QLineEdit *m_urlLineEdit;
 };
 

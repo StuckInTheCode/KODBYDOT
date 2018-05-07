@@ -35,7 +35,8 @@ SOURCES += \
     historytreeview.cpp \
     toolbarsearch.cpp \
     savepagedialog.cpp \
-    settings.cpp
+    settings.cpp \
+    bookmarkdialog.cpp
 
 HEADERS += \
     browser.h \
@@ -58,7 +59,8 @@ HEADERS += \
     historytreeview.h \
     toolbarsearch.h \
     savepagedialog.h \
-    settings.h
+    settings.h \
+    bookmarkdialog.h
 
 FORMS += \
     window.ui \
@@ -71,4 +73,5 @@ FORMS += \
     historymanager.ui \
     savepagedialog.ui \
     settings.ui \
-    downloadwidget.ui
+    downloadwidget.ui \
+    bookmarkdialog.ui

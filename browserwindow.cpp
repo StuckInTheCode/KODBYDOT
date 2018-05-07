@@ -61,6 +61,8 @@
 #include "savepagedialog.h"
 #include "webview.h"
 #include "settings.h"
+#include "bookmarkdialog.h"
+
 #include <QApplication>
 #include <QCloseEvent>
 #include <QAction>
@@ -84,6 +86,7 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     , m_cookiejar ( new CookieJar(this, profile))
     , m_cookiemanager( new CookieManager())
     , m_button( new QPushButton(this) )
+    , m_bookmark( new QPushButton(this) )
     , m_urlLineEdit( new QLineEdit(this))
     , m_search( new ToolbarSearch(this))
 {
@@ -97,15 +100,20 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     menuBar()->addMenu(createFileMenu(m_tabWidget));
     menuBar()->addMenu(createViewMenu());
     menuBar()->addMenu(createOptionsMenu());
+
     //m_layout->addItem(new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding));
     //m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(10);
     m_search->setFixedWidth(300);
+    m_bookmark->setText("B");
+    m_bookmark->setFixedWidth(25);
+    //m_bookmark->setIcon(new QIcon());
     QWidget *w = new QWidget();
     //QPalette p = w->palette();
     //w->setPalette(p);
     w->setLayout(m_layout);
     m_layout->addWidget(m_urlLineEdit);
+    m_layout->addWidget(m_bookmark);
     m_layout->addWidget(m_search);
     m_layout->addWidget(m_button);
 
@@ -131,8 +139,13 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
    // });
     //connect(button,&QPushButton::clicked, this, &BrowserWindow::on_pushButton_clicked);
     connect(m_button,&QPushButton::clicked, this, &BrowserWindow::load);
+    connect(m_bookmark,&QPushButton::clicked, this, &BrowserWindow::addToBookmarks);
     connect(m_search, SIGNAL(search(QUrl)), SLOT(loadURL(QUrl)));
     connect(m_tabWidget,&TabWidget::urlChanged,this,&BrowserWindow::urlChanged);
+    connect(m_tabWidget, &TabWidget::linkHovered, [this](const QString& url) {
+        statusBar()->showMessage(url);
+    });
+    //connect(m_tabWidget, &TabWidget::loadProgress, this, &BrowserWindow::loadProgress);
     //connect(m_search,&ToolbarSearch::search(QUrl),this,(QUrl)->{m_tabWidget->loadURL(QUrl))};
     mainWidget->setLayout(layout);
     setCentralWidget(mainWidget);
@@ -143,25 +156,11 @@ void BrowserWindow::urlChanged(const QUrl &url)
 {
     m_urlLineEdit->setText(url.toDisplayString());
 }
-void BrowserWindow:: on_pushButton_clicked()
+
+void BrowserWindow::addToBookmarks()
 {
-
-    //m_cookiemanager->LoadCookies(m_cookiejar);
-    //m_cookiemanager->show();
-    //SavePageDialog dialog()
-    HistoryManager * manager = new HistoryManager(this);
-    manager->show();
-    manager->setMainWindow(this);
-
-    manager->raise();
-    manager->activateWindow();
-
-
-    //manager->show();
-    //m_pages.put(&(m_tabWidget->preview->page()));
-    //m_pages.push_back();
-    //m_pages.contains();
-    //m_pages.removeOne()
+    BookmarkDialog * dialog = new BookmarkDialog(this);
+    dialog->exec();
 }
 void BrowserWindow::load()
 {

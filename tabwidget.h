@@ -7,7 +7,6 @@
 #include <QToolButton>
 #include <QLineEdit>
 #include <QTabBar>
-#include "tabbar.h"
 #include "ui_window.h"
 #include "webview.h"
 #include "webpage.h"
@@ -76,11 +75,11 @@ public:
     void TabWidget::handleCurrentChanged(int index)
     {
         if (index != -1) {
-            QWebEngineView *view = webView(index);
+            WebView *view = webView(index);
             if (!view->url().isEmpty())
                 view->setFocus();
             emit titleChanged(view->title());
-            //emit loadProgress(view->loadProgress());
+            //emit loadProgress(view->loadProgress(););
             emit urlChanged(view->url());
             //emit IconChanged(view->favIcon());
             /*emit webActionEnabledChanged(QWebEnginePage::Back, view->isWebActionEnabled(QWebEnginePage::Back));
@@ -89,7 +88,7 @@ public:
             emit webActionEnabledChanged(QWebEnginePage::Reload,view->isWebActionEnabled(QWebEnginePage::Reload));
         */} else {
             emit titleChanged(QString());
-            //emit loadProgress(0);
+            emit loadProgress(0);
             emit urlChanged(QUrl());
             //emit IconChanged(QIcon());
             /*emit webActionEnabledChanged(QWebEnginePage::Back, false);
@@ -101,7 +100,7 @@ public:
 
     void load()
     {
-        QWebEngineView *view = webView(currentIndex());
+        WebView *view = webView(currentIndex());
         view->load(QUrl(ui->lineEdit->text()));
        //QWebEngineView * webView = this->currentWidget()->children();
        // webView->load(QUrl(ui->lineEdit->text()));
@@ -110,7 +109,7 @@ public:
     }
     bool loadURL(QUrl url)
     {
-        QWebEngineView *view = webView(currentIndex());
+        WebView *view = webView(currentIndex());
         //view->load(url);
         view->setUrl(url);
         //bool correctRequest = 1?view->page()->
@@ -121,9 +120,26 @@ public:
         return false;
     }
 
-    QWebEngineView* createTab()
+    WebView* createTab()
     {
-        QWebEngineView *webView = createBackgroundTab();
+        WebView * webView = createBackgroundTab();
+        //QWebEngineView *webView = createBackgroundTab();
+
+        setCurrentWidget(webView);
+        return webView;
+    }
+    WebView* createBackgroundTab()
+    {
+        WebView *webView = new WebView(nullptr);
+        //QWebEngineView * webView= new QWebEngineView(nullptr);
+
+        //this->preview->
+        WebPage *webPage = new WebPage(m_profile, webView);
+        webView->setPage(webPage);
+        connect(webPage, &QWebEnginePage::linkHovered, [this, webView](const QString &url) {
+            if (currentIndex() == indexOf(webView))
+                emit linkHovered(url);
+        });
         connect(webView, &QWebEngineView::titleChanged, [this, webView](const QString &title) {
             int index = indexOf(webView);
             if (index != -1) {
@@ -140,6 +156,11 @@ public:
             if (currentIndex() == index)
                 emit urlChanged(url);
         });
+        connect(webView, &QWebEngineView::loadProgress, [this, webView](int progress) {
+            if (currentIndex() == indexOf(webView))
+                emit loadProgress(progress);
+        });
+
         /*connect(webView, &WebView::favIconChanged, [this, webView](const QIcon &icon) {
             int index = indexOf(webView);
             if (index != -1)
@@ -157,40 +178,33 @@ public:
                     //if (currentIndex() == index)
                     //    emit favIconChanged(icon);
                 });
-        setCurrentWidget(webView);
-        return webView;
-    }
-    QWebEngineView* createBackgroundTab()
-    {
-        //WebView *webView2 = new WebView(nullptr);
-        QWebEngineView * webView= new QWebEngineView(nullptr);
-
-        //this->preview->
-        WebPage *webPage = new WebPage(m_profile, webView);
-        webView->setPage(webPage);
         //setupView(webView);
         //ui->tabWidget->addTab(webView, tr("(Untitled)"));
 
         int index = addTab(webView, tr("    "));
+
 
         //preview=webView;
         //setTabIcon(index, webView->favIcon());
         //Workaround for QTBUG-61770
         //webView->resize(currentWidget()->size()); //вызывает исключение
         webView->show();
-        webView->load(QUrl("http://harrix.org/"));
+        //webView2->load(QUrl("http://harrix.org/"));
         //webView->load(QUrl(ui->lineEdit->text()));
         return webView;
     }
 
 signals:
+    // current tab/page signals
+void linkHovered(const QString &link);
+void loadProgress(int progress);
 void titleChanged(const QString &title);
 void urlChanged(const QUrl &url);
 public slots:
 
     void closeTab(int index)
     {
-        if (QWebEngineView *view = webView(index)) {
+        if (WebView *view = webView(index)) {
                //bool hasFocus = view->hasFocus();
                removeTab(index);
                //if (hasFocus && count() > 0)
@@ -201,7 +215,7 @@ public slots:
            }
 
     }
-    QWebEngineView *currentWebView() const
+    WebView *currentWebView() const
     {
         return webView(currentIndex());
     }
@@ -221,9 +235,9 @@ private:
     Ui::window *ui;
     //QUrl *m_url;
     //QLineEdit *UrlPath;
-    QWebEngineView *webView(int index) const
+    WebView *webView(int index) const
     {
-        return qobject_cast<QWebEngineView*>(QTabWidget::widget(index));
+        return qobject_cast<WebView*>(QTabWidget::widget(index));
     }
     /*void setupView(QWebEngineView *webView)
     {
