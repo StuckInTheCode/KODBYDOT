@@ -36,7 +36,8 @@ SOURCES += \
     toolbarsearch.cpp \
     savepagedialog.cpp \
     settings.cpp \
-    bookmarkdialog.cpp
+    bookmarkdialog.cpp \
+    bookmark.cpp
 
 HEADERS += \
     browser.h \
@@ -60,7 +61,8 @@ HEADERS += \
     toolbarsearch.h \
     savepagedialog.h \
     settings.h \
-    bookmarkdialog.h
+    bookmarkdialog.h \
+    bookmark.h
 
 FORMS += \
     window.ui \

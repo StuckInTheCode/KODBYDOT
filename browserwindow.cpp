@@ -82,7 +82,7 @@
 BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     : m_browser(browser)
     , m_profile(profile)
-    , m_tabWidget(new TabWidget(profile, this))
+    , m_tabWidget(new TabWidget(profile, this, browser->getHomePage()))
     , m_cookiejar ( new CookieJar(this, profile))
     , m_cookiemanager( new CookieManager())
     , m_button( new QPushButton(this) )
@@ -113,12 +113,13 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     //w->setPalette(p);
     w->setLayout(m_layout);
     m_layout->addWidget(m_urlLineEdit);
-    m_layout->addWidget(m_bookmark);
-    m_layout->addWidget(m_search);
     m_layout->addWidget(m_button);
+    m_layout->addWidget(m_search);
+    m_layout->addWidget(m_bookmark);
 
     //ui->setupUi(this);
     //ui->preview->load(QUrl("http://harrix.org/"));
+    //ui->preview->load(this->browser()->getHomePage());
     setAttribute(Qt::WA_DeleteOnClose, true);
     setFocusPolicy(Qt::ClickFocus);
 
@@ -139,6 +140,7 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
    // });
     //connect(button,&QPushButton::clicked, this, &BrowserWindow::on_pushButton_clicked);
     connect(m_button,&QPushButton::clicked, this, &BrowserWindow::load);
+    connect(m_urlLineEdit, &QLineEdit::returnPressed,this, &BrowserWindow::load);
     connect(m_bookmark,&QPushButton::clicked, this, &BrowserWindow::addToBookmarks);
     connect(m_search, SIGNAL(search(QUrl)), SLOT(loadURL(QUrl)));
     connect(m_tabWidget,&TabWidget::urlChanged,this,&BrowserWindow::urlChanged);
@@ -155,6 +157,7 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
 void BrowserWindow::urlChanged(const QUrl &url)
 {
     m_urlLineEdit->setText(url.toDisplayString());
+    history()->addHistoryEntry(m_tabWidget->currentWebView());
 }
 
 void BrowserWindow::addToBookmarks()
@@ -164,22 +167,11 @@ void BrowserWindow::addToBookmarks()
 }
 void BrowserWindow::load()
 {
-
-    //m_tabWidget->loadURL(QUrl::fromUserInput(m_urlLineEdit->text()));
-    //if(!url)
-       m_tabWidget->loadURL(QUrl::fromUserInput(m_urlLineEdit->text()));
-    //else
-    //    m_tabWidget->loadURL(url);
+    m_tabWidget->loadURL(QUrl::fromUserInput(m_urlLineEdit->text()));
     m_urlLineEdit->setText(m_tabWidget->currentWebView()->url().toDisplayString());
-    history()->addHistoryEntry(m_tabWidget->currentWebView());
-    /*{
-        m_urlLineEdit->setText("incorrect path");
-    }*/
-
-    /*QWebEngineView *view = webView(currentIndex());
-
-    view->load(QUrl(ui->lineEdit->text()));*/
+    //history()->addHistoryEntry(m_tabWidget->currentWebView());
 }
+
 void BrowserWindow::loadURL(QUrl url)
 {
     if (!url.isValid())

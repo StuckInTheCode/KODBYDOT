@@ -2,7 +2,7 @@
 #define BOOKMARKDIALOG_H
 
 #include <QDialog>
-
+#include <QString>
 namespace Ui {
 class BookmarkDialog;
 }
@@ -13,6 +13,8 @@ class BookmarkDialog : public QDialog
 
 public:
     explicit BookmarkDialog(QWidget *parent = 0);
+    bool saveToFile(QString filename);
+    bool loadFromFile(QString filename);
     ~BookmarkDialog();
 
 private:

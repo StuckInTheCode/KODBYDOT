@@ -10,8 +10,9 @@ int main(int argc, char **argv)
 {
 
     QCoreApplication::setOrganizationName("StuckInTheCode");
-    //QCoreApplication::setOrganizationDomain("mysoft.com");
+    //QCoreApplication::setOrganizationDomain("https://github.com/StuckInTheCode/KODBYDOT");
     QCoreApplication::setApplicationName("KODBYDOT");
+
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
@@ -39,6 +40,7 @@ int main(int argc, char **argv)
     }
 
     SqlDatabase::instance()->setDatabase(db);
+
 
     BrowserWindow *window = browser.createWindow();
     //BrowserWindow *window2 = browser.createWindow();

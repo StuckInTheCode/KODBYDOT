@@ -22,7 +22,6 @@ class BrowserWindow : public QMainWindow
 
 public:
     BrowserWindow(Browser *browser, QWebEngineProfile *profile);
-    //WebView *currentTab() const;
     TabWidget *tabWidget() const;
     WebView *currentTab() const;
     Browser *browser(){ return m_browser; }
@@ -42,7 +41,6 @@ public slots:
     void load();
     void loadURL(QUrl url);
     void addToBookmarks();
-    // void on_pushButton_clicked();
     void urlChanged(const QUrl &url);
 private:
     QAction *m_stopAction;
@@ -52,7 +50,7 @@ private:
     CookieManager * m_cookiemanager;
     //QLineEdit *m_urlLineEdit;
     QWebEngineProfile *m_profile;
-    QLinkedList<WebPage*> m_pages;
+    //QLinkedList<WebPage*> m_pages;
     //Ui::window *ui;
     ToolbarSearch * m_search;
     TabWidget *m_tabWidget;

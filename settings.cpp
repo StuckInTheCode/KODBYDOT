@@ -21,6 +21,13 @@ Settings::Settings(QWidget *parent)
     //connect(standardFontButton, SIGNAL(clicked()), this, SLOT(chooseFont()));
     //connect(fixedFontButton, SIGNAL(clicked()), this, SLOT(chooseFixedFont()));
     //connect(this->buttonBox,&QDialogButtonBox::accepted,this,&Settings::accept());
+    connect(this->m_homeButton,&QPushButton::clicked,[this](){
+    QSettings settings;
+    settings.beginGroup("Home-Page");
+    settings.setValue(QLatin1String("url"), m_homePage->text());
+    settings.endGroup();
+    }
+    );
     loadDefaults();
     loadFromSettings();
 }
@@ -71,6 +78,11 @@ void Settings::loadFromSettings()
     //m_usePerDomainUserAgent = settings.value("UsePerDomainUA", false).toBool();
     //QStringList domainList = settings.value("DomainList", QStringList()).toStringList();
     //QStringList userAgentsList = settings.value("UserAgentsList", QStringList()).toStringList();
+    settings.endGroup();
+
+    //QSettings settings;
+    settings.beginGroup("Home-Page");
+    m_homePage->setText(settings.value("url", QString()).toString());
     settings.endGroup();
 
    /* QSettings settings;
@@ -157,6 +169,11 @@ void Settings::saveToSettings()
     //m_usePerDomainUserAgent = settings.value("UsePerDomainUA", false).toBool();
     //QStringList domainList = settings.value("DomainList", QStringList()).toStringList();
     //QStringList userAgentsList = settings.value("UserAgentsList", QStringList()).toStringList();
+    settings.endGroup();
+
+    //QSettings settings;
+    settings.beginGroup("Home-Page");
+    settings.setValue(QLatin1String("url"), m_homePage->text());
     settings.endGroup();
 
     //BrowserApplication::cookieJar()->loadSettings();

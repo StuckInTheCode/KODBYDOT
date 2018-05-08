@@ -60,14 +60,18 @@ class History;
 class Browser
 {
 public:
-    Browser();
+    explicit Browser();
+    ~Browser();
     QVector<BrowserWindow*> windows() { return mWindows; }
     BrowserWindow *createWindow();
+    QUrl * getHomePage();
+    void setHomePage(QUrl * url);
     History* m_history;
 private:
     QVector<BrowserWindow*> mWindows;
     DownloadManagerWidget m_downloadManagerWidget;
     NetworkUrlInterceptor * m_urlInterceptor;
+    QUrl * m_homePage;
     QWebEngineProfile * profile;
 };
 #endif // BROWSER_H

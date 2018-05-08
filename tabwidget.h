@@ -24,7 +24,7 @@ class TabWidget : public QTabWidget//, public Ui::window
     Q_OBJECT
 
 public:
-    TabWidget(QWebEngineProfile *profile, QWidget *parent = nullptr): QTabWidget(parent), m_profile(profile),ui(new Ui::window)
+    TabWidget(QWebEngineProfile *profile, QWidget *parent = nullptr, QUrl * homePage = nullptr): QTabWidget(parent), m_profile(profile),ui(new Ui::window),m_homePage(homePage)
     {
         //QWidget *m_window = new QWidget(nullptr);
         //ui->setupUi(this);
@@ -189,6 +189,7 @@ public:
         //Workaround for QTBUG-61770
         //webView->resize(currentWidget()->size()); //вызывает исключение
         webView->show();
+        webView->load(*m_homePage);
         //webView2->load(QUrl("http://harrix.org/"));
         //webView->load(QUrl(ui->lineEdit->text()));
         return webView;
@@ -239,6 +240,7 @@ private:
     {
         return qobject_cast<WebView*>(QTabWidget::widget(index));
     }
+    QUrl * m_homePage;
     /*void setupView(QWebEngineView *webView)
     {
        // QWebEnginePage *webPage = webView->page();
