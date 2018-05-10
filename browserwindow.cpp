@@ -84,7 +84,7 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     , m_profile(profile)
     , m_tabWidget(new TabWidget(profile, this, browser->getHomePage()))
     , m_cookiejar ( new CookieJar(this, profile))
-    , m_cookiemanager( new CookieManager())
+    //, m_cookiemanager( new CookieManager())
     , m_button( new QPushButton(this) )
     , m_bookmark( new QPushButton(this) )
     , m_urlLineEdit( new QLineEdit(this))
@@ -162,7 +162,8 @@ void BrowserWindow::urlChanged(const QUrl &url)
 
 void BrowserWindow::addToBookmarks()
 {
-    BookmarkDialog * dialog = new BookmarkDialog(this);
+    //BookmarkDialog * dialog = new BookmarkDialog(":/data/bookmarks",currentTab(),this);
+    BookmarkDialog * dialog = new BookmarkDialog("C:\\Programming\\Qt\\browser\\bookmarks",currentTab(),this);
     dialog->exec();
 }
 void BrowserWindow::load()
@@ -294,7 +295,9 @@ QMenu *BrowserWindow::createOptionsMenu()
 
     QAction *showCookie = new QAction(tr("Cookie"), this);
     connect(showCookie, &QAction::triggered, this, [this](){
-        m_cookiemanager->show();
+        //m_cookiemanager->show();
+
+
     });
     menu->addAction(showCookie);
 

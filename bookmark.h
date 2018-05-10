@@ -7,52 +7,43 @@ class Bookmark
 {
 public:
     Bookmark();
-    void read(const QJsonObject &json);
-    /*if (json.contains("name") && json["name"].isString())
-        mName = json["name"].toString();
+    Bookmark(QString name, QUrl url)
+    {
+        mName=name;
+        mUrl=url;
+    }
+    QString name()
+    {
+        return mName;
+    }
+    QUrl url()
+    {
+        return mUrl;
+    }
+    void read(const QJsonObject &json)
+    {
+        if (json.contains("name") && json["name"].isString())
+            mName = json["name"].toString();
 
-    if (json.contains("level") && json["level"].isDouble())
-        mLevel = json["level"].toInt();
-
-    if (json.contains("classType") && json["classType"].isDouble())
-        mClassType = ClassType(json["classType"].toInt());
-      */
-    void write(QJsonObject &json) const;
-    /*
-    json["name"] = mName;
-    json["level"] = mLevel;
-    json["classType"] = mClassType;
-    */
+        if (json.contains("url") && json["url"].isString())
+            mUrl = QUrl( json["url"].toString());
+    }
+    void write(QJsonObject &json) const
+    {
+        json["name"] = mName;
+        json["url"] = mUrl.toDisplayString();
+    }
+    /*bool operator ==(const Bookmark &bookmark)
+    {
+        //const Bookmark bookmark2 =*this;
+        //if(this->name().compare(bookmark.name()) && this->url().matches(bookmark.url()))
+        //if(QString::compare(bookmark.name(),bookmark2.name()) && bookmark.url().matches(bookmark2.url()))
+            return true;
+        return false;
+    }*/
 private:
     QString mName;
     QUrl mUrl;
 };
-
-/*
-#include <QJsonObject>
-#include <QVector>
-
-#include "character.h"
-
-//! [0]
-class Level
-{
-public:
-    Level() = default;
-    Level(const QString &name);
-
-    QString name() const;
-
-    QVector<Character> npcs() const;
-    void setNpcs(const QVector<Character> &npcs);
-
-    void read(const QJsonObject &json);
-    void write(QJsonObject &json) const;
-
-    void print(int indentation = 0) const;
-private:
-    QString mName;
-    QVector<Character> mNpcs;
-};*/
 
 #endif // BOOKMARK_H

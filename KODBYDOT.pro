@@ -76,4 +76,8 @@ FORMS += \
     savepagedialog.ui \
     settings.ui \
     downloadwidget.ui \
-    bookmarkdialog.ui
+    bookmarkdialog.ui \
+    bookmark.ui
+
+RESOURCES += \
+    resources.qrc
