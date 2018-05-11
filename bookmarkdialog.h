@@ -36,9 +36,12 @@ class BookmarkWidget : public QWidget,  public Ui_Bookmark
 {
     Q_OBJECT
 public:
-    BookmarkWidget(const Bookmark &bookmark, QWidget *parent = nullptr);
+    BookmarkWidget(const Bookmark &bookmark, QWidget *parent = nullptr)
+    {
+        setupUi(this);
+    }
 signals:
-    void deleteClicked();
-    void loadClicked();
+    //void deleteClicked();
+    //void loadClicked();
 };
 #endif // BOOKMARKDIALOG_H

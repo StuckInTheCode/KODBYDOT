@@ -13,15 +13,23 @@ BookmarkDialog::BookmarkDialog(QString filename,QWebEngineView * webView,QWidget
 {
     this->filename = filename;
     ui->setupUi(this);
+    ui->scrollAreaWidgetContents->setLayout(new QVBoxLayout());
+    ui->scrollArea->setWidgetResizable(true);
+    ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     //ui->listWidget->setLayout(new QVBoxLayout());
     loadFromFile(Json);
+    for(Bookmark b : m_bookmarks) ui->scrollAreaWidgetContents->layout()->addWidget(new BookmarkWidget(b));
 }
 
 bool BookmarkDialog::loadFromFile(BookmarkDialog::SaveFormat saveFormat)
 {
-    QFile loadFile(saveFormat == Json
+    /*QFile loadFile(saveFormat == Json
                    ?filename+=".json"
-                   :filename+=".dat");
+                   :filename+=".dat");*/
+    QFile loadFile(saveFormat == Json
+                       ?filename
+                       :filename+=".dat");
 
     if (!loadFile.open(QIODevice::ReadOnly)) {
         qWarning("Couldn't open save file.");
@@ -43,9 +51,12 @@ bool BookmarkDialog::loadFromFile(BookmarkDialog::SaveFormat saveFormat)
 
 bool BookmarkDialog::saveToFile(BookmarkDialog::SaveFormat saveFormat)
 {
-    QFile saveFile(saveFormat == Json
+    /*QFile saveFile(saveFormat == Json
                    ?filename+=".json"
-                   :filename+=".dat");
+                   :filename+=".dat");*/
+    QFile saveFile(saveFormat == Json
+                       ?filename
+                       :filename+=".dat");
 
     if (!saveFile.open(QIODevice::WriteOnly)) {
         qWarning("Couldn't open save file.");
