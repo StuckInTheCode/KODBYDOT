@@ -13,13 +13,40 @@ BookmarkDialog::BookmarkDialog(QString filename,QWebEngineView * webView,QWidget
 {
     this->filename = filename;
     ui->setupUi(this);
-    ui->scrollAreaWidgetContents->setLayout(new QVBoxLayout());
     ui->scrollArea->setWidgetResizable(true);
+    ui->scrollAreaWidgetContents->setLayout(new QVBoxLayout());
+    //ui->scrollAreaWidgetContents->layout()->addItem(new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    ui->scrollAreaWidgetContents->layout()->setContentsMargins(0, 0, 0, 0);
+    ui->scrollAreaWidgetContents->layout()->setSpacing(0);
+    //ui->scrollArea->setWidgetResizable(true);
     ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    //ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     //ui->listWidget->setLayout(new QVBoxLayout());
     loadFromFile(Json);
-    for(Bookmark b : m_bookmarks) ui->scrollAreaWidgetContents->layout()->addWidget(new BookmarkWidget(b));
+    for(Bookmark b : m_bookmarks) {
+        BookmarkWidget* widget = new BookmarkWidget(b);
+        ui->scrollAreaWidgetContents->layout()->addWidget(widget);
+        /*connect(widget, &CookieWidget::deleteClicked, [this, cookie, widget]() {
+            m_store->deleteCookie(cookie);
+            delete widget;
+            m_cookies.removeOne(cookie);
+            for (int i = 0; i < m_layout->count() - 1; i++) {
+                // fix background colors
+                auto widget = qobject_cast<CookieWidget*>(m_layout->itemAt(i)->widget());
+                widget->setHighlighted(i % 2);
+            }
+        });*/
+        connect(widget,&BookmarkWidget::deleteClicked,[this,b,widget](){
+           // if(qWarning("Bookmark will be delete permanently, are you sure?")==Qt:accept()){
+            m_bookmarks.removeOne(b);
+            delete widget;
+            //ui->scrollAreaWidgetContents->layout()->removeWidget(widget);
+
+            saveToFile(Json);
+          //  }
+        });
+        //connect(widget->loadButton,&QPushButton::clicked,b,&BookmarkWidget::loadClicked);
+    }
 }
 
 bool BookmarkDialog::loadFromFile(BookmarkDialog::SaveFormat saveFormat)
@@ -98,6 +125,10 @@ void BookmarkDialog::write(QJsonObject &json) const
     }
     json["bookmarks"] = Array;
 }
+/*void BookmarkDialog::delete()
+{
+
+}*/
 
 void BookmarkDialog::accept()
 {

@@ -7,6 +7,12 @@ class Bookmark
 {
 public:
     Bookmark();
+    Bookmark(const Bookmark & bookmark)
+    {
+        mName=bookmark.mName;
+        mUrl=bookmark.mUrl;
+
+    }
     Bookmark(QString name, QUrl url)
     {
         mName=name;
@@ -33,14 +39,27 @@ public:
         json["name"] = mName;
         json["url"] = mUrl.toDisplayString();
     }
-    /*bool operator ==(const Bookmark &bookmark)
+    /*bool operator ==(Bookmark &bookmark)
     {
-        //const Bookmark bookmark2 =*this;
-        //if(this->name().compare(bookmark.name()) && this->url().matches(bookmark.url()))
-        //if(QString::compare(bookmark.name(),bookmark2.name()) && bookmark.url().matches(bookmark2.url()))
+        const Bookmark *bookmark2 =this;
+        //if(this->name().compare(bookmark.name()) && this->url()==bookmark.url())
+        //if(QString::compare(bookmark.name(),bookmark2->name()))
+         //   if( bookmark.url()==bookmark2->url())
+        if(this->name().compare(bookmark.name()))
+               if(this->url()==bookmark.url())
             return true;
         return false;
     }*/
+    friend bool operator ==(const Bookmark &bookmark1,const Bookmark &bookmark2)
+    {
+        //if(this->name().compare(bookmark.name()) && this->url()==bookmark.url())
+        //if(QString::compare(bookmark.name(),bookmark2->name()))
+         //   if( bookmark.url()==bookmark2->url())
+        if(bookmark1.mName.compare(bookmark2.mName))
+               if(bookmark1.mUrl==bookmark2.mUrl)
+            return true;
+        return false;
+    }
 private:
     QString mName;
     QUrl mUrl;

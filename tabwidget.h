@@ -128,6 +128,12 @@ public:
         setCurrentWidget(webView);
         return webView;
     }
+    WebView* createIncognitoTab()
+    {
+        WebView * webView = createTab();
+        webView->isIncognito=true;
+        return webView;
+    }
     WebView* createBackgroundTab()
     {
         WebView *webView = new WebView(nullptr);

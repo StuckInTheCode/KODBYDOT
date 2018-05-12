@@ -84,7 +84,7 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     , m_profile(profile)
     , m_tabWidget(new TabWidget(profile, this, browser->getHomePage()))
     , m_cookiejar ( new CookieJar(this, profile))
-    //, m_cookiemanager( new CookieManager())
+    , m_cookiemanager( new CookieManager())
     , m_button( new QPushButton(this) )
     , m_bookmark( new QPushButton(this) )
     , m_urlLineEdit( new QLineEdit(this))
@@ -157,6 +157,7 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
 void BrowserWindow::urlChanged(const QUrl &url)
 {
     m_urlLineEdit->setText(url.toDisplayString());
+    if(!m_tabWidget->currentWebView()->isIncognito)
     history()->addHistoryEntry(m_tabWidget->currentWebView());
 }
 
@@ -194,6 +195,9 @@ QMenu *BrowserWindow::createFileMenu(TabWidget *tabWidget)
 
     //fileMenu->addAction(tr("&Open File..."), this, &BrowserWindow::handleFileOpenTriggered, QKeySequence::Open);
     fileMenu->addSeparator();
+    QAction *newIncognitoTabAction = new QAction(tr("New Incognito &Tab"), this);
+    connect(newIncognitoTabAction, &QAction::triggered, tabWidget, &TabWidget::createIncognitoTab);
+    fileMenu->addAction(newIncognitoTabAction);
 
     QAction *savePage = new QAction(tr("&Save page"), this);
     connect(savePage, &QAction::triggered, [this]() {
@@ -295,9 +299,7 @@ QMenu *BrowserWindow::createOptionsMenu()
 
     QAction *showCookie = new QAction(tr("Cookie"), this);
     connect(showCookie, &QAction::triggered, this, [this](){
-        //m_cookiemanager->show();
-
-
+        m_cookiemanager->show();
     });
     menu->addAction(showCookie);
 

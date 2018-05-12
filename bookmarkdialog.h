@@ -36,12 +36,18 @@ class BookmarkWidget : public QWidget,  public Ui_Bookmark
 {
     Q_OBJECT
 public:
-    BookmarkWidget(const Bookmark &bookmark, QWidget *parent = nullptr)
+    BookmarkWidget( Bookmark &bookmark, QWidget *parent = nullptr)
     {
         setupUi(this);
+        this->name->setText(bookmark.name());
+        this->url->setText(bookmark.url().toDisplayString());
+        connect(loadButton, &QPushButton::clicked, this, &BookmarkWidget::loadClicked);
+        connect(delButton, &QPushButton::clicked, this, &BookmarkWidget::deleteClicked);
+        //this->url->blockSignals(true);
+
     }
 signals:
-    //void deleteClicked();
-    //void loadClicked();
+    void deleteClicked();
+    void loadClicked();
 };
 #endif // BOOKMARKDIALOG_H

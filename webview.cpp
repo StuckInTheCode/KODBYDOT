@@ -12,6 +12,7 @@
 
 WebView::WebView(QWidget *parent): QWebEngineView(parent)
 {
+    isIncognito=false;
 }
 void WebView::setPage(WebPage *page)
 {
@@ -34,8 +35,9 @@ QWebEngineView *WebView::createWindow(QWebEnginePage::WebWindowType type)
         return mainWindow->browser()->createWindow()->currentTab();
     }
     case QWebEnginePage::WebDialog: {
-        //WebPopupWindow *popup = new WebPopupWindow(page()->profile());
-        //return popup->view();
+        //return mainWindow->browser()->createWindow()-> ;
+        WebPopupWindow *popup = new WebPopupWindow(page()->profile());
+        return popup->view();
     }
     }
     return nullptr;
