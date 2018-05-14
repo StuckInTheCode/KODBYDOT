@@ -42,6 +42,7 @@ public slots:
     void loadURL(QUrl url);
     void addToBookmarks();
     void urlChanged(const QUrl &url);
+    void titleChanged(const QString &title);
 private:
     QAction *m_stopAction;
     QAction *m_reloadAction;

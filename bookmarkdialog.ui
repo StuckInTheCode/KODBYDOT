@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>386</width>
-    <height>479</height>
+    <height>525</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -52,7 +52,7 @@
           <property name="minimumSize">
            <size>
             <width>331</width>
-            <height>381</height>
+            <height>351</height>
            </size>
           </property>
           <property name="widgetResizable">
@@ -64,11 +64,35 @@
              <x>0</x>
              <y>0</y>
              <width>346</width>
-             <height>387</height>
+             <height>402</height>
             </rect>
            </property>
           </widget>
          </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="deletebutton">
+            <property name="text">
+             <string>Delete all</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>

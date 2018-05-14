@@ -6,47 +6,56 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QLineEdit>
+#include <QMessageBox>
 BookmarkDialog::BookmarkDialog(QString filename,QWebEngineView * webView,QWidget *parent) :
     QDialog(parent),
     m_webView(webView),
+    m_layout(new QVBoxLayout()),
     ui(new Ui::BookmarkDialog)
 {
     this->filename = filename;
     ui->setupUi(this);
+
+    m_layout->addItem(new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->setSpacing(0);
+    ui->scrollAreaWidgetContents->setLayout(m_layout);
     ui->scrollArea->setWidgetResizable(true);
-    ui->scrollAreaWidgetContents->setLayout(new QVBoxLayout());
-    //ui->scrollAreaWidgetContents->layout()->addItem(new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding));
-    ui->scrollAreaWidgetContents->layout()->setContentsMargins(0, 0, 0, 0);
-    ui->scrollAreaWidgetContents->layout()->setSpacing(0);
-    //ui->scrollArea->setWidgetResizable(true);
     ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    //ui->listWidget->setLayout(new QVBoxLayout());
+    ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     loadFromFile(Json);
+
     for(Bookmark b : m_bookmarks) {
         BookmarkWidget* widget = new BookmarkWidget(b);
-        ui->scrollAreaWidgetContents->layout()->addWidget(widget);
-        /*connect(widget, &CookieWidget::deleteClicked, [this, cookie, widget]() {
-            m_store->deleteCookie(cookie);
-            delete widget;
-            m_cookies.removeOne(cookie);
-            for (int i = 0; i < m_layout->count() - 1; i++) {
-                // fix background colors
-                auto widget = qobject_cast<CookieWidget*>(m_layout->itemAt(i)->widget());
-                widget->setHighlighted(i % 2);
-            }
-        });*/
+        m_layout->insertWidget(0,widget);
         connect(widget,&BookmarkWidget::deleteClicked,[this,b,widget](){
-           // if(qWarning("Bookmark will be delete permanently, are you sure?")==Qt:accept()){
-            m_bookmarks.removeOne(b);
+            QMessageBox::StandardButton button = QMessageBox::warning(this, tr("Confirmation"),
+                                                 tr("Are you sure you want to delete bookmark?"), QMessageBox::Yes | QMessageBox::No);
+            if (button != QMessageBox::Yes) {
+                return;
+            }
+            if(m_bookmarks.size()==1)
+               m_bookmarks.clear();
+            else
+                m_bookmarks.removeOne(b);
             delete widget;
-            //ui->scrollAreaWidgetContents->layout()->removeWidget(widget);
-
             saveToFile(Json);
-          //  }
         });
-        //connect(widget->loadButton,&QPushButton::clicked,b,&BookmarkWidget::loadClicked);
+        connect(widget,&BookmarkWidget::loadClicked,[this,b](){
+            emit newBookmarkTab(b.url());
+        });
     }
+    connect(this->ui->deletebutton,&QPushButton::clicked,[this](){
+        QMessageBox::StandardButton button = QMessageBox::warning(this, tr("Confirmation"),
+                                             tr("Are you sure to delete ALL bookmark?"), QMessageBox::Yes | QMessageBox::No);
+        if (button != QMessageBox::Yes) {
+            return;
+        }
+        m_bookmarks.clear();
+        for (int i = m_layout->count() - 1; i >= 0; i--)
+            delete m_layout->itemAt(i)->widget();
+        saveToFile(Json);
+    });
 }
 
 bool BookmarkDialog::loadFromFile(BookmarkDialog::SaveFormat saveFormat)
@@ -125,19 +134,20 @@ void BookmarkDialog::write(QJsonObject &json) const
     }
     json["bookmarks"] = Array;
 }
-/*void BookmarkDialog::delete()
+/*void BookmarkDialog::deleteAll()
 {
-
+    m_bookmarks.clear();
 }*/
 
 void BookmarkDialog::accept()
 {
     Bookmark bookmark(this->ui->name->text(),m_webView->url());
     loadFromFile(Json);
-    /*if(m_bookmarks.contains(bookmark))
+    if(m_bookmarks.contains(bookmark))
     {
+
         return;
-    }*/
+    }
     /*if(m_bookmarks.contains(bookmark))
     {
         return;

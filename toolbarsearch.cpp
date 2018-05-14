@@ -33,8 +33,10 @@ ToolbarSearch::ToolbarSearch(QWidget *parent)
     connect(this, SIGNAL(returnPressed()), SLOT(searchNow()));
    // setInactiveText(tr("Google"));
     setWhatsThis(tr("Google"));
+    setPlaceholderText("Search");
+    setClearButtonEnabled(true);
     //setText(tr("Google"));
-    load();
+    //load();
 }
 
 ToolbarSearch::~ToolbarSearch()
@@ -44,21 +46,21 @@ ToolbarSearch::~ToolbarSearch()
 
 void ToolbarSearch::save()
 {
-    QSettings settings;
+    /*QSettings settings;
     settings.beginGroup(QLatin1String("toolbarsearch"));
     settings.setValue(QLatin1String("recentSearches"), m_stringListModel->stringList());
     settings.setValue(QLatin1String("maximumSaved"), m_maxSavedSearches);
-    settings.endGroup();
+    settings.endGroup();*/
 }
 
 void ToolbarSearch::load()
 {
-    QSettings settings;
+    /*QSettings settings;
     settings.beginGroup(QLatin1String("toolbarsearch"));
     QStringList list = settings.value(QLatin1String("recentSearches")).toStringList();
     m_maxSavedSearches = settings.value(QLatin1String("maximumSaved"), m_maxSavedSearches).toInt();
     m_stringListModel->setStringList(list);
-    settings.endGroup();
+    settings.endGroup();*/
 }
 
 void ToolbarSearch::searchNow()
@@ -88,7 +90,7 @@ void ToolbarSearch::searchNow()
 }
 
 void ToolbarSearch::aboutToShowMenu()
-{
+{/*
     //lineEdit()->selectAll();
     //QMenu *m = menu();
     //m->clear();
@@ -106,10 +108,11 @@ void ToolbarSearch::aboutToShowMenu()
     }
     //m->addSeparator();
     //m->addAction(tr("Clear Recent Searches"), this, SLOT(clear()));
+    */
 }
 
 void ToolbarSearch::triggeredMenuAction(QAction *action)
-{
+{/*
     QVariant v = action->data();
     if (v.canConvert<QString>()) {
         QString text = v.toString();
@@ -117,6 +120,7 @@ void ToolbarSearch::triggeredMenuAction(QAction *action)
         this->setText(text);
         searchNow();
     }
+    */
 }
 
 void ToolbarSearch::clear()

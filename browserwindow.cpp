@@ -92,9 +92,6 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
 {
     m_cookiemanager->LoadCookies(m_cookiejar);
     connect(m_cookiejar, &CookieJar::cookieAdded, m_cookiemanager, &CookieManager::addCookie);
-    //QPushButton *m_button =  new QPushButton(this);
-    //QLineEdit *m_urlLineEdit = new QLineEdit(this);
-    //m_urlLineEdit->setAlignment(Qt::AlignLeft);
     m_button->setText("GO");
     QHBoxLayout *m_layout = new QHBoxLayout(this);
     menuBar()->addMenu(createFileMenu(m_tabWidget));
@@ -144,9 +141,11 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     connect(m_bookmark,&QPushButton::clicked, this, &BrowserWindow::addToBookmarks);
     connect(m_search, SIGNAL(search(QUrl)), SLOT(loadURL(QUrl)));
     connect(m_tabWidget,&TabWidget::urlChanged,this,&BrowserWindow::urlChanged);
+    //connect(m_tabWidget,&TabWidget::titleChanged,this,&BrowserWindow::titleChanged);
     connect(m_tabWidget, &TabWidget::linkHovered, [this](const QString& url) {
         statusBar()->showMessage(url);
     });
+    connect(m_cookiemanager, &CookieManager::deleteCookie, m_cookiejar,&CookieJar::deleteCookie);
     //connect(m_tabWidget, &TabWidget::loadProgress, this, &BrowserWindow::loadProgress);
     //connect(m_search,&ToolbarSearch::search(QUrl),this,(QUrl)->{m_tabWidget->loadURL(QUrl))};
     mainWidget->setLayout(layout);
@@ -154,17 +153,37 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     //m_tabWidget->createTab();
 
 }
+void BrowserWindow::titleChanged(const QString &title)
+{
+     WebView * view = m_tabWidget->currentWebView();
+     if(view)
+         if(!view->isIncognito)
+         {
+             //const QUrl url = view->url();
+             //const QString title = view->title();
+             //history()->addHistoryEntry(url,title);
+              history()->addHistoryEntry(view);
+         }
+
+}
+
 void BrowserWindow::urlChanged(const QUrl &url)
 {
     m_urlLineEdit->setText(url.toDisplayString());
-    if(!m_tabWidget->currentWebView()->isIncognito)
-    history()->addHistoryEntry(m_tabWidget->currentWebView());
+    WebView * view = m_tabWidget->currentWebView();
+    if(view)
+        if(!view->isIncognito)
+        {
+            //const QUrl url = view->url();
+            history()->addHistoryEntry(view);
+        }
 }
 
 void BrowserWindow::addToBookmarks()
 {
     //BookmarkDialog * dialog = new BookmarkDialog(":/data/bookmarks",currentTab(),this);
     BookmarkDialog * dialog = new BookmarkDialog("C:\\Programming\\Qt\\browser\\bookmarks",currentTab(),this);
+    connect(dialog,&BookmarkDialog::newBookmarkTab,m_tabWidget,&TabWidget::loadURL);
     dialog->exec();
 }
 void BrowserWindow::load()
