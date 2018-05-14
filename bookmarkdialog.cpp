@@ -60,9 +60,6 @@ BookmarkDialog::BookmarkDialog(QString filename,QWebEngineView * webView,QWidget
 
 bool BookmarkDialog::loadFromFile(BookmarkDialog::SaveFormat saveFormat)
 {
-    /*QFile loadFile(saveFormat == Json
-                   ?filename+=".json"
-                   :filename+=".dat");*/
     QFile loadFile(saveFormat == Json
                        ?filename
                        :filename+=".dat");
@@ -87,9 +84,6 @@ bool BookmarkDialog::loadFromFile(BookmarkDialog::SaveFormat saveFormat)
 
 bool BookmarkDialog::saveToFile(BookmarkDialog::SaveFormat saveFormat)
 {
-    /*QFile saveFile(saveFormat == Json
-                   ?filename+=".json"
-                   :filename+=".dat");*/
     QFile saveFile(saveFormat == Json
                        ?filename
                        :filename+=".dat");
@@ -134,10 +128,6 @@ void BookmarkDialog::write(QJsonObject &json) const
     }
     json["bookmarks"] = Array;
 }
-/*void BookmarkDialog::deleteAll()
-{
-    m_bookmarks.clear();
-}*/
 
 void BookmarkDialog::accept()
 {
@@ -148,10 +138,6 @@ void BookmarkDialog::accept()
 
         return;
     }
-    /*if(m_bookmarks.contains(bookmark))
-    {
-        return;
-    }*/
     m_bookmarks.append(bookmark);
     saveToFile(Json);
     QDialog::accept();

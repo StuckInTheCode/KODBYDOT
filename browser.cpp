@@ -18,19 +18,12 @@ Browser::Browser():
     QObject::connect(
         profile, &QWebEngineProfile::downloadRequested,
         &m_downloadManagerWidget, &DownloadManagerWidget::downloadRequested);
-
-    // QObject::connect(this,&QWebEngineCertificateError::Error,certificateError(const QWebEngineCertificateError &error)
 }
 
 BrowserWindow *Browser::createWindow()
 {
-   // m_urlInterceptor = new NetworkUrlInterceptor();
-
     auto mainWindow = new BrowserWindow(this, profile);
-    //QSettings::setDefaultFormat(QSettings::IniFormat);
-
     mWindows.push_back(mainWindow);
-    //mainWindow->resize();
     mWindows.append(mainWindow);
     mainWindow->show();
     return mainWindow;
@@ -45,9 +38,4 @@ QUrl* Browser::getHomePage()
 }
 Browser::~Browser()
 {
-    //QSettings settings;
-    //settings.beginGroup("Home-Page");
-    //settings.setValue(QLatin1String("url"), m_homePage->toDisplayString());
-    //settings.endGroup();
-
 }

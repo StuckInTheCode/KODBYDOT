@@ -1,15 +1,9 @@
 #ifndef TOOLBARSEARCH_H
 #define TOOLBARSEARCH_H
-
-//#include "searchlineedit.h"
-
-//QT_BEGIN_NAMESPACE
 class QUrl;
 class QAction;
 class QStringListModel;
-//QT_END_NAMESPACE
 #include <QLineEdit>
-class AutoSaver;
 
 class ToolbarSearch : public QLineEdit
 {
@@ -33,8 +27,6 @@ private slots:
 
 private:
     void load();
-
-    //AutoSaver *m_autosaver;
     int m_maxSavedSearches;
     QStringListModel *m_stringListModel;
 };

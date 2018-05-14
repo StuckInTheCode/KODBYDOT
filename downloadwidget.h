@@ -77,8 +77,11 @@ public:
        connect(m_cancelButton, &QPushButton::clicked,
                [this](bool) {
            if (m_download->state() == QWebEngineDownloadItem::DownloadInProgress)
+               m_download->pause();
+           else if (m_download->state() == QWebEngineDownloadItem::DownloadInterrupted)
+               m_download->resume();
+           else
                m_download->cancel();
-           //else
            //    emit removeClicked(this);
        });
 
@@ -88,13 +91,56 @@ public:
        connect(m_download, &QWebEngineDownloadItem::stateChanged,
                this, &DownloadWidget::updateWidget);
 
-       //updateWidget();
+       updateWidget();
    }
     void updateWidget()
     {
         if(m_download->isFinished())
             this->close();
-        //this->m_progressBar->
+        qreal totalBytes = m_download->totalBytes();
+        qreal receivedBytes = m_download->receivedBytes();
+        qreal bytesPerSecond = receivedBytes / m_timeAdded.elapsed() * 1000;
+
+        auto state = m_download->state();
+        switch (state) {
+        case QWebEngineDownloadItem::DownloadRequested:
+            Q_UNREACHABLE();
+            break;
+        case QWebEngineDownloadItem::DownloadInProgress:
+            if (totalBytes >= 0) {
+                m_progressBar->setValue(qRound(100 * receivedBytes / totalBytes));
+                m_progressBar->setDisabled(false);
+            } else {
+                m_progressBar->setValue(0);
+                m_progressBar->setDisabled(false);
+            }
+            break;
+        case QWebEngineDownloadItem::DownloadCompleted:
+            m_progressBar->setValue(100);
+            m_progressBar->setDisabled(true);
+            break;
+        case QWebEngineDownloadItem::DownloadCancelled:
+            m_progressBar->setValue(0);
+            m_progressBar->setDisabled(true);
+            break;
+        case QWebEngineDownloadItem::DownloadInterrupted:
+            m_progressBar->setValue(0);
+            m_progressBar->setDisabled(true);
+            m_progressBar->setFormat(
+                tr("interrupted: %1")
+                .arg(m_download->interruptReasonString()));
+            break;
+        }
+
+        if (state == QWebEngineDownloadItem::DownloadInProgress) {
+            static QIcon cancelIcon(QStringLiteral(":process-stop.png"));
+            m_cancelButton->setIcon(cancelIcon);
+            m_cancelButton->setToolTip(tr("Stop downloading"));
+        } else {
+            static QIcon removeIcon(QStringLiteral(":edit-clear.png"));
+            m_cancelButton->setIcon(removeIcon);
+            m_cancelButton->setToolTip(tr("Remove from list"));
+        }
     }
 
 

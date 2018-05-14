@@ -82,13 +82,11 @@ public:
 
     void load()
     {
-        //QMutexLocker lock(&m_mutex);
         WebView *view = webView(currentIndex());
         view->load(QUrl(ui->lineEdit->text()));
     }
     bool loadURL(QUrl url)
     {
-        //QMutexLocker lock(&m_mutex);
         WebView *view = webView(currentIndex());
         view->setUrl(url);
         return false;
@@ -103,7 +101,6 @@ public:
     }
     WebView* createIncognitoTab()
     {
-       // QMutexLocker lock(&m_mutex);
         if(this->count()>31)
         {
             QMessageBox::StandardButton button = QMessageBox::warning(this, tr("Confirmation"),
@@ -141,7 +138,6 @@ public:
 
     WebView* createBackgroundTab()
     {
-       // QMutexLocker lock(&m_mutex);
         if(this->count()>31)
         {
             QMessageBox::StandardButton button = QMessageBox::warning(this, tr("Confirmation"),
@@ -178,10 +174,7 @@ public:
 
         connect(webView, &QWebEngineView::iconChanged, [this, webView](const QIcon &icon) {
                     int index = indexOf(webView);
-                    //if (index != -1)
                         setTabIcon(index, icon);
-                    //if (currentIndex() == index)
-                    //emit favIconChanged(icon);
                 });
 
 
@@ -219,33 +212,22 @@ public slots:
         return webView(currentIndex());
     }
     void setUrl(const QUrl &url){}
-    //WebView *createTab();
-    //WebView *createBackgroundTab();
 
-    void nextTab(){}
+    /*void nextTab(){}
     void previousTab(){}
     void cloneTab(int index){}
     void closeOtherTabs(int index){}
     void reloadAllTabs(){}
-    void reloadTab(int index){}
+    void reloadTab(int index){}*/
 
 
 private:
-    //QMutex m_mutex;
     Ui::window *ui;
-    //QUrl *m_url;
-    //QLineEdit *UrlPath;
     WebView *webView(int index) const
     {
          return qobject_cast<WebView*>(QTabWidget::widget(index));
     }
     QUrl * m_homePage;
-    /*void setupView(QWebEngineView *webView)
-    {
-       // QWebEnginePage *webPage = webView->page();
-
-        //ui->preview->setPage(webPage);
-    }*/
     QWebEngineProfile *m_profile;
 };
 
