@@ -19,22 +19,14 @@ int main(int argc, char **argv)
     QApplication app(argc, argv);
     app.setWindowIcon(QIcon(QStringLiteral("C:\\KODBYDOT.png")));
     QWebEngineSettings::defaultSettings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
-    //QSettings s_settings;
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    //const QString s = "C:\\Programming\\Qt\\browser\\settings.ini";
-    //QFile * f = new QFile(s);
-    //s_settings = new QSettings(QApplication::applicationDirPath() + QLatin1String("/settings.ini"), QSettings::IniFormat);
-    //s_settings =  new QSettings(s, QSettings::IniFormat);
-    //s_settings->sync();
+
     Browser browser;
     const QString dbFile = QApplication::applicationDirPath() + QLatin1String("/browsedata.db");
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("C:\\browsedata.db");
-    //db.setDatabaseName("C:\\Programming\\Qt\\browser\\build-KODBYDOT-Desktop_Qt_5_10_1_MSVC2015_32bit-Release\\debug\\browsedata.db");
-    //const QString dFile = QDir::current().absolutePath()+ QLatin1String("/browsedata.db");
-    //db.setDatabaseName(dFile);
-
+    //db.setDatabaseName(":/data/browsedata.db");
     if (!db.open()) {
         qWarning("Cannot open SQLite database! Continuing without database....");
     }
@@ -43,7 +35,5 @@ int main(int argc, char **argv)
 
 
     BrowserWindow *window = browser.createWindow();
-    //BrowserWindow *window2 = browser.createWindow();
-    //window->currentTab()->setUrl(url);
     return app.exec();
 }

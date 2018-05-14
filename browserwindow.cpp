@@ -103,20 +103,15 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     m_layout->setSpacing(10);
     m_search->setFixedWidth(300);
     m_bookmark->setText("B");
-    m_bookmark->setFixedWidth(25);
-    //m_bookmark->setIcon(new QIcon());
+    m_bookmark->setFixedWidth(25);;
     QWidget *w = new QWidget();
-    //QPalette p = w->palette();
-    //w->setPalette(p);
     w->setLayout(m_layout);
     m_layout->addWidget(m_urlLineEdit);
     m_layout->addWidget(m_button);
     m_layout->addWidget(m_search);
     m_layout->addWidget(m_bookmark);
 
-    //ui->setupUi(this);
-    //ui->preview->load(QUrl("http://harrix.org/"));
-    //ui->preview->load(this->browser()->getHomePage());
+
     setAttribute(Qt::WA_DeleteOnClose, true);
     setFocusPolicy(Qt::ClickFocus);
 
@@ -128,30 +123,21 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     layout->setMargin(0);
     layout->addWidget(w);
     layout->addWidget(m_tabWidget);
-    //QPushButton *button = new QPushButton(mainWidget);
-    //layout->addWidget(button);
-    //mainWidget->setLayout(m_tabWidget);
+
     addToolBarBreak();
-    //connect(m_tabWidget, &TabWidget::urlChanged, [this](const QUrl &url) {
-    //    m_urlLineEdit->setText(url.toDisplayString());
-   // });
-    //connect(button,&QPushButton::clicked, this, &BrowserWindow::on_pushButton_clicked);
+
     connect(m_button,&QPushButton::clicked, this, &BrowserWindow::load);
     connect(m_urlLineEdit, &QLineEdit::returnPressed,this, &BrowserWindow::load);
     connect(m_bookmark,&QPushButton::clicked, this, &BrowserWindow::addToBookmarks);
     connect(m_search, SIGNAL(search(QUrl)), SLOT(loadURL(QUrl)));
     connect(m_tabWidget,&TabWidget::urlChanged,this,&BrowserWindow::urlChanged);
-    //connect(m_tabWidget,&TabWidget::titleChanged,this,&BrowserWindow::titleChanged);
     connect(m_tabWidget, &TabWidget::linkHovered, [this](const QString& url) {
         statusBar()->showMessage(url);
     });
     connect(m_cookiemanager, &CookieManager::deleteCookie, m_cookiejar,&CookieJar::deleteCookie);
-    //connect(m_tabWidget, &TabWidget::loadProgress, this, &BrowserWindow::loadProgress);
-    //connect(m_search,&ToolbarSearch::search(QUrl),this,(QUrl)->{m_tabWidget->loadURL(QUrl))};
+
     mainWidget->setLayout(layout);
     setCentralWidget(mainWidget);
-    //m_tabWidget->createTab();
-
 }
 void BrowserWindow::titleChanged(const QString &title)
 {
@@ -174,7 +160,6 @@ void BrowserWindow::urlChanged(const QUrl &url)
     if(view)
         if(!view->isIncognito)
         {
-            //const QUrl url = view->url();
             history()->addHistoryEntry(view);
         }
 }
@@ -190,7 +175,6 @@ void BrowserWindow::load()
 {
     m_tabWidget->loadURL(QUrl::fromUserInput(m_urlLineEdit->text()));
     m_urlLineEdit->setText(m_tabWidget->currentWebView()->url().toDisplayString());
-    //history()->addHistoryEntry(m_tabWidget->currentWebView());
 }
 
 void BrowserWindow::loadURL(QUrl url)
@@ -204,16 +188,14 @@ void BrowserWindow::loadURL(QUrl url)
 QMenu *BrowserWindow::createFileMenu(TabWidget *tabWidget)
 {
     QMenu *fileMenu = new QMenu(tr("&File"));
-    //fileMenu->addAction(tr("&New Window"), this, &BrowserWindow::handleNewWindowTriggered, QKeySequence::New);
-    //fileMenu->addAction(tr("New &Incognito Window"), this, &BrowserWindow::handleNewIncognitoWindowTriggered);
 
     QAction *newTabAction = new QAction(tr("New &Tab"), this);
     newTabAction->setShortcuts(QKeySequence::AddTab);
     connect(newTabAction, &QAction::triggered, tabWidget, &TabWidget::createTab);
     fileMenu->addAction(newTabAction);
 
-    //fileMenu->addAction(tr("&Open File..."), this, &BrowserWindow::handleFileOpenTriggered, QKeySequence::Open);
     fileMenu->addSeparator();
+
     QAction *newIncognitoTabAction = new QAction(tr("New Incognito &Tab"), this);
     connect(newIncognitoTabAction, &QAction::triggered, tabWidget, &TabWidget::createIncognitoTab);
     fileMenu->addAction(newIncognitoTabAction);
@@ -222,8 +204,6 @@ QMenu *BrowserWindow::createFileMenu(TabWidget *tabWidget)
     connect(savePage, &QAction::triggered, [this]() {
         SavePageDialog * dialog = new SavePageDialog(nullptr,QWebEngineDownloadItem::SavePageFormat::UnknownSaveFormat,this->currentTab());
         dialog->exec();
-        //this->currentTab()->page()->save(nullptr);
-        //tabWidget->closeTab(tabWidget->currentIndex());
     });
     fileMenu->addAction(savePage);
 
@@ -288,7 +268,7 @@ QMenu *BrowserWindow::createViewMenu()//QToolBar *toolbar
     });
 
 
-    /*viewMenu->addSeparator();
+    viewMenu->addSeparator();
 
     QAction *viewStatusbarAction = new QAction(tr("Hide Status Bar"), this);
     viewStatusbarAction->setShortcut(tr("Ctrl+/"));
@@ -301,7 +281,7 @@ QMenu *BrowserWindow::createViewMenu()//QToolBar *toolbar
             statusBar()->show();
         }
     });
-    viewMenu->addAction(viewStatusbarAction);*/
+    viewMenu->addAction(viewStatusbarAction);
     return viewMenu;
 }
 

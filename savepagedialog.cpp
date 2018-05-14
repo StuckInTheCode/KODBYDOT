@@ -18,7 +18,6 @@ SavePageDialog::SavePageDialog(QWidget *parent, QWebEngineDownloadItem::SavePage
     , m_webView(webView)
 {
     ui->setupUi(this);
-    //ui->comboBox->setCurrentIndex(formatToIndex(format));
     connect(ui->buttonBox,&QDialogButtonBox::accepted ,this,&SavePageDialog::save);
     connect(ui->buttonBox,&QDialogButtonBox::rejected ,this,&SavePageDialog::close);
 }
@@ -30,8 +29,6 @@ SavePageDialog::~SavePageDialog()
 void SavePageDialog::save()
 {
     m_webView->page()->save(nullptr,pageFormat());
-    //m_webView->page()->
-    //this->close();
 }
 
 QWebEngineDownloadItem::SavePageFormat SavePageDialog::pageFormat() const

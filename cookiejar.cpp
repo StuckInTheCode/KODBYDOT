@@ -11,7 +11,6 @@
 CookieJar::CookieJar(QObject* parent,QWebEngineProfile *profile)
     : QObject(parent)
     , m_client(profile->cookieStore())
-    //, m_client(mApp->webProfile()->cookieStore())
 {
     loadSettings();
     m_client->loadAllCookies();
@@ -77,8 +76,6 @@ bool CookieJar::matchDomain(QString cookieDomain, QString siteDomain) const
     int index = siteDomain.indexOf(cookieDomain);
 
     return index > 0 && siteDomain[index - 1] == QLatin1Char('.');
-    //return QString::compare(cookieDomain,siteDomain);
-    //return QzTools::matchDomain(cookieDomain, siteDomain);
 }
 
 bool CookieJar::listMatchesDomain(const QStringList &list, const QString &cookieDomain) const
@@ -98,11 +95,10 @@ void CookieJar::slotCookieAdded(const QNetworkCookie &cookie)
         m_client->deleteCookie(cookie);
         return;
     }
-
+    if(m_cookies.contains(cookie))
+        return;
     m_cookies.append(cookie);
     emit cookieAdded(cookie);
-   //CookieDialog dialog(cookie);
-   // dialog.exec();
 }
 
 void CookieJar::slotCookieRemoved(const QNetworkCookie &cookie)
