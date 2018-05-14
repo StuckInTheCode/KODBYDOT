@@ -68,8 +68,6 @@ QVariant HistoryModel::data(const QModelIndex &index, int role) const
         case Qt::DisplayRole:
         case Qt::EditRole:
             return index.column() == 0 ? item->title : QVariant();
-        //case Qt::DecorationRole:
-            //return index.column() == 0 ? QIcon::fromTheme(QSL("view-calendar"), QIcon(":/icons/menu/history_entry.svg")) : QVariant();
         }
 
         return QVariant();
@@ -112,11 +110,6 @@ QVariant HistoryModel::data(const QModelIndex &index, int role) const
             return entry.count;
         }
         break;
-    /*case Qt::DecorationRole:
-        if (index.column() == 0) {
-            //return 0;
-            //return item->icon().isNull() ? IconProvider::emptyWebIcon() : item->icon();
-        }*/
     }
 
     return QVariant();
@@ -514,7 +507,7 @@ HistoryFilterModel::HistoryFilterModel(QAbstractItemModel* parent)
 void HistoryFilterModel::setFilterFixedString(const QString &pattern)
 {
     m_pattern = pattern;
-
+    int i=0;
     m_filterTimer->start();
 }
 

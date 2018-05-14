@@ -20,46 +20,21 @@ HistoryManager::HistoryManager(BrowserWindow* window, QWidget* parent)
     , m_window(window)
     , m_history(window->history())
 {
-    /*HistoryTreeView * view = new HistoryTreeView(this);
-    view->Init(m_history);
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setSpacing(0);
-    layout->setMargin(0);
-    layout->addWidget(view);
-    this->setLayout(layout);*/
-
-    /*connect(view, SIGNAL(urlActivated(QUrl)), this, SLOT(urlActivated(QUrl)));
-    connect(view, SIGNAL(urlCtrlActivated(QUrl)), this, SLOT(urlCtrlActivated(QUrl)));
-    connect(view, SIGNAL(urlShiftActivated(QUrl)), this, SLOT(urlShiftActivated(QUrl)));
-    connect(view, SIGNAL(contextMenuRequested(QPoint)), this, SLOT(createContextMenu(QPoint)));
-*/
-    //connect(ui->deleteB, SIGNAL(clicked()), view, SLOT(removeSelectedItems()));
-   //connect(ui->clearAll, SIGNAL(clicked()), this, SLOT(clearHistory()));
-    //ui->historyTree->Init(m_history);
     ui->setupUi(this);
 
-
-    //ui->treeWidget->addTopLevelItem(m_history->model());
-    //ui->whiteList->addItem(m_history->);
     ui->historyTree->setViewType(HistoryTreeView::HistoryManagerViewType);
-    //ui->historyTree->setViewType(HistoryTreeView::HistorySidebarViewType);
     ui->historyTree->Init(m_history);
-    //ui->historyTree->setVisible(true);
-    //connect(ui->historyTree, SIGNAL(urlActivated(QUrl)), this, SLOT(urlActivated(QUrl)));
-    //connect(ui->historyTree, SIGNAL(urlCtrlActivated(QUrl)), this, SLOT(urlCtrlActivated(QUrl)));
-    //connect(ui->historyTree, SIGNAL(urlShiftActivated(QUrl)), this, SLOT(urlShiftActivated(QUrl)));
+    connect(ui->historyTree,&HistoryTreeView::urlActivated,this,&HistoryManager::urlActivated);
     //connect(ui->historyTree, SIGNAL(contextMenuRequested(QPoint)), this, SLOT(createContextMenu(QPoint)));
 
     connect(ui->deleteB, SIGNAL(clicked()), ui->historyTree, SLOT(removeSelectedItems()));
     connect(ui->clearAll, SIGNAL(clicked()), this, SLOT(clearHistory()));
-
+    connect(ui->searchButton,SIGNAL(clicked()),this,SLOT(searchName()));
     //ui->historyTree->setFocus();
 }
 
 BrowserWindow* HistoryManager::getWindow()
 {
-    //if (!m_window)
-    //    m_window =
     return m_window.data();
 }
 
@@ -104,9 +79,14 @@ void HistoryManager::keyPressEvent(QKeyEvent *event)
     QWidget::keyPressEvent(event);
 }
 
+void HistoryManager::searchName()
+{
+    search(ui->searchEdit->text());
+}
+
 void HistoryManager::search(const QString &searchText)
 {
-    //ui->historyTree->search(searchText);
+    ui->historyTree->search(searchText);
 }
 
 void HistoryManager::urlActivated(const QUrl &url)
@@ -127,7 +107,7 @@ void HistoryManager::urlShiftActivated(const QUrl &url)
 void HistoryManager::openUrl(const QUrl &url)
 {
     const QUrl u = !url.isEmpty() ? url : ui->historyTree->selectedUrl();
-    //m_window->weView()->load(u);
+    m_window->loadURL(u);
 }
 
 void HistoryManager::openUrlInNewTab(const QUrl &url)

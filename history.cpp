@@ -22,7 +22,6 @@ HistoryModel* History::model()
     if (!m_model) {
         m_model = new HistoryModel(this);
     }
-    //return new HistoryModel(this);
     return m_model;
  }
 
@@ -32,11 +31,6 @@ void History::loadSettings()
     settings.beginGroup("Web-Browser-Settings");
     m_isSaving = settings.value("allowHistory", true).toBool();
     settings.endGroup();
-    /*Settings settings;
-    settings.beginGroup("Web-Browser-Settings");
-    m_isSaving = settings.value("allowHistory", true).toBool();
-    settings.endGroup();*/
-    //m_isSaving=true;
 }
 
 // AddHistoryEntry
@@ -165,8 +159,6 @@ void History::deleteHistoryEntry(const QList<int> &list)
         urls.append(entry.url);
         emit historyEntryDeleted(entry);
     }
-
-    //mApp->webProfile()->clearVisitedLinks(urls);
 
     db.commit();
 }
