@@ -27,7 +27,6 @@ SOURCES += \
     urlinterceptor.cpp \
     cookiemanager.cpp \
     history.cpp \
-    historytree.cpp \
     historymodel.cpp \
     historyitem.cpp \
     sqldatabase.cpp \
@@ -37,7 +36,10 @@ SOURCES += \
     savepagedialog.cpp \
     settings.cpp \
     bookmarkdialog.cpp \
-    bookmark.cpp
+    bookmark.cpp \
+    tabwidget.cpp \
+    webpage.cpp \
+    webpopupwindow.cpp
 
 HEADERS += \
     browser.h \
@@ -52,7 +54,6 @@ HEADERS += \
     urlinterceptor.h \
     cookiemanager.h \
     history.h \
-    historytree.h \
     historymodel.h \
     historyitem.h \
     sqldatabase.h \
@@ -65,13 +66,11 @@ HEADERS += \
     bookmark.h
 
 FORMS += \
-    window.ui \
     cookiejar.ui \
     cookiemanager.ui \
     cookiedialog.ui \
     search.ui \
     sslerror.ui \
-    history.ui \
     historymanager.ui \
     savepagedialog.ui \
     settings.ui \

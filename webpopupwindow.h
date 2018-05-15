@@ -52,7 +52,10 @@
 #define WEBPOPUPWINDOW_H
 
 #include <QWidget>
-
+#include <QVBoxLayout>
+#include <QLineEdit>
+#include "webview.h"
+#include "webpage.h"
 QT_BEGIN_NAMESPACE
 class QLineEdit;
 class QWebEngineProfile;
@@ -69,8 +72,7 @@ public:
     WebPopupWindow(QWebEngineProfile *profile);
     WebView *view() const;
 private:
-    //QLineEdit *m_urlLineEdit;
-    //using ui?
+    QLineEdit *m_urlLineEdit;
     QAction *m_favAction;
     WebView *m_view;
 };
