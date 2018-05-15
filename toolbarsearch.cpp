@@ -1,6 +1,4 @@
 #include "toolbarsearch.h"
-//#include "autosaver.h"
-//#include "browserapplication.h"
 #include "browser.h"
 #include <QtCore/QSettings>
 #include <QtCore/QUrl>
@@ -12,24 +10,11 @@
 
 #include <QWebEngineSettings>
 
-/*
-    ToolbarSearch is a very basic search widget that also contains a small history.
-    Searches are turned into urls that use Google to perform search
- */
 ToolbarSearch::ToolbarSearch(QWidget *parent)
     : QLineEdit(parent)
     , m_maxSavedSearches(10)
     , m_stringListModel(new QStringListModel(this))
-    //, m_autosaver(new AutoSaver(this))
 {
-    //QMenu *m = menu();
-    //connect(m, SIGNAL(aboutToShow()), this, SLOT(aboutToShowMenu()));
-    //connect(m, SIGNAL(triggered(QAction*)), this, SLOT(triggeredMenuAction(QAction*)));
-
-    //QCompleter *completer = new QCompleter(m_stringListModel, this);
-    //completer->setCompletionMode(QCompleter::InlineCompletion);
-    //lineEdit()->setCompleter(completer);
-
     connect(this, SIGNAL(returnPressed()), SLOT(searchNow()));
    // setInactiveText(tr("Google"));
     setWhatsThis(tr("Google"));
@@ -65,7 +50,6 @@ void ToolbarSearch::load()
 
 void ToolbarSearch::searchNow()
 {
-    //QString searchText = lineEdit()->text();
     QString searchText = this->text();
     QStringList newList = m_stringListModel->stringList();
     if (newList.contains(searchText))
@@ -73,11 +57,6 @@ void ToolbarSearch::searchNow()
     newList.prepend(searchText);
     if (newList.size() >= m_maxSavedSearches)
         newList.removeLast();
-
-    /*if (!BrowserApplication::instance()->privateBrowsing()) {
-        m_stringListModel->setStringList(newList);
-        m_autosaver->changeOccurred();
-    }*/
 
     QUrl url(QLatin1String("http://www.google.com/search"));
     QUrlQuery urlQuery;
@@ -126,7 +105,6 @@ void ToolbarSearch::triggeredMenuAction(QAction *action)
 void ToolbarSearch::clear()
 {
     m_stringListModel->setStringList(QStringList());
-   // m_autosaver->changeOccurred();;
 }
 /*QMenu *ToolbarSearch::menu() const
 {

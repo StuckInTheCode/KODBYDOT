@@ -5,10 +5,8 @@
 
 #include <QtConcurrent/QtConcurrentRun>
 QThreadStorage<QSqlDatabase> s_databases;
-
 Q_GLOBAL_STATIC(SqlDatabase, qz_sql_database)
 
-// SqlDatabase
 SqlDatabase::SqlDatabase(QObject* parent)
     : QObject(parent)
 {

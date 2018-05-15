@@ -35,7 +35,6 @@ QWebEngineView *WebView::createWindow(QWebEnginePage::WebWindowType type)
         return mainWindow->browser()->createWindow()->currentTab();
     }
     case QWebEnginePage::WebDialog: {
-        //return mainWindow->browser()->createWindow()-> ;
         WebPopupWindow *popup = new WebPopupWindow(page()->profile());
         return popup->view();
     }

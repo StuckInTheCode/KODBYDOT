@@ -30,13 +30,11 @@ public:
 private:
     QMenu *createFileMenu(TabWidget *tabWidget);
     QMenu *createEditMenu();
-    QMenu *createViewMenu(); //QToolBar *toolBar
+    QMenu *createViewMenu();
     QMenu *createWindowMenu(TabWidget *tabWidget);
     QMenu *createOptionsMenu();
     QMenu *createHelpMenu();
     QToolBar *createToolBar();
-//public signals:
-
 public slots:
     void load();
     void loadURL(QUrl url);
@@ -49,10 +47,7 @@ private:
     Browser *m_browser;
     CookieJar *m_cookiejar;
     CookieManager * m_cookiemanager;
-    //QLineEdit *m_urlLineEdit;
     QWebEngineProfile *m_profile;
-    //QLinkedList<WebPage*> m_pages;
-    //Ui::window *ui;
     ToolbarSearch * m_search;
     TabWidget *m_tabWidget;
     QPushButton *m_button;
