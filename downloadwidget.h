@@ -77,12 +77,13 @@ public:
        connect(m_cancelButton, &QPushButton::clicked,
                [this](bool) {
            if (m_download->state() == QWebEngineDownloadItem::DownloadInProgress)
-               m_download->pause();
-           else if (m_download->state() == QWebEngineDownloadItem::DownloadInterrupted)
-               m_download->resume();
+                m_download->cancel();
+            //   m_download->pause();
+           //else if (m_download->state() == QWebEngineDownloadItem::DownloadInterrupted)
+           //    m_download->resume();
            else
-               m_download->cancel();
-           //    emit removeClicked(this);
+               emit removeSignal(this);
+               //m_download->cancel();
        });
 
        connect(m_download, &QWebEngineDownloadItem::downloadProgress,
@@ -143,7 +144,8 @@ public:
         }
     }
 
-
+signals:
+    void removeSignal(DownloadWidget* m_widget);
 private:
 
     QWebEngineDownloadItem *m_download;

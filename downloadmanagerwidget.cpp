@@ -13,6 +13,7 @@ DownloadManagerWidget::DownloadManagerWidget(QWidget *parent)
     m_itemsLayout->addItem(new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding));
     m_itemsLayout->setContentsMargins(0, 0, 0, 0);
     m_itemsLayout->setSpacing(0);
+    m_numDownloads=0;
     this->setLayout(m_itemsLayout);
 }
 void DownloadManagerWidget::downloadRequested(QWebEngineDownloadItem *download)
@@ -31,13 +32,18 @@ void DownloadManagerWidget::downloadRequested(QWebEngineDownloadItem *download)
 }
 void DownloadManagerWidget::add(DownloadWidget *downloadWidget)
 {
-    //connect(downloadWidget, &DownloadWidget::removeClicked, this, &DownloadManagerWidget::remove);
+    connect(downloadWidget, &DownloadWidget::removeSignal, this, &DownloadManagerWidget::remove);
     m_itemsLayout->insertWidget(0, downloadWidget, 0, Qt::AlignTop);
+    m_numDownloads++;
 }
 
 void DownloadManagerWidget::remove(DownloadWidget *downloadWidget)
 {
     m_itemsLayout->removeWidget(downloadWidget);
     downloadWidget->deleteLater();
+    m_numDownloads--;
+    if(!m_numDownloads)
+        this->close();
+
 
 }
