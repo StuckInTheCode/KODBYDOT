@@ -19,7 +19,17 @@ Browser::Browser():
         profile, &QWebEngineProfile::downloadRequested,
         &m_downloadManagerWidget, &DownloadManagerWidget::downloadRequested);
 }
-
+void Browser::loadSettings()
+{
+    QSettings settings;
+    settings.beginGroup("Home-Page");
+    m_homePage = new QUrl(settings.value("url", QString()).toString());
+    settings.endGroup();
+    profile->setRequestInterceptor(m_urlInterceptor);
+    QObject::connect(
+        profile, &QWebEngineProfile::downloadRequested,
+        &m_downloadManagerWidget, &DownloadManagerWidget::downloadRequested);
+}
 BrowserWindow *Browser::createWindow()
 {
     auto mainWindow = new BrowserWindow(this, profile);

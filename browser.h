@@ -68,6 +68,7 @@ public:
     void setHomePage(QUrl * url);
     History* m_history;
 private:
+    void loadSettings();
     QVector<BrowserWindow*> mWindows;
     DownloadManagerWidget m_downloadManagerWidget;
     NetworkUrlInterceptor * m_urlInterceptor;

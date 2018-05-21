@@ -79,6 +79,7 @@
 #include <QWebEngineProfile>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QStandardPaths>
 BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
     : m_browser(browser)
     , m_profile(profile)
@@ -92,16 +93,16 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile)
 {
     m_cookiemanager->LoadCookies(m_cookiejar);
     connect(m_cookiejar, &CookieJar::cookieAdded, m_cookiemanager, &CookieManager::addCookie);
+    m_button->setStyleSheet("QPushButton{background-color: red;border-style: outset;border-width: 2px;border-radius: 5px;border-color: beige;min-width: 8em;padding: 3px; } QPushButton:pressed {background-color: rgb(224, 0, 0); border-style: inset;}");
     m_button->setText("GO");
     QHBoxLayout *m_layout = new QHBoxLayout(this);
     menuBar()->addMenu(createFileMenu(m_tabWidget));
     menuBar()->addMenu(createViewMenu());
     menuBar()->addMenu(createOptionsMenu());
-
-    //m_layout->addItem(new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding));
-    //m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(10);
     m_search->setFixedWidth(300);
+    //m_bookmark->setStyleSheet("QPushButton{background:#AB0263;}");
+    m_bookmark->setStyleSheet("QPushButton{background-color: blue;border-style: outset;border-width: 2px;border-radius: 5px;border-color: beige; min-width: 5em;padding: 3px; } QPushButton:pressed {background-color: rgb(10, 0, 214); border-style: inset;}");
     m_bookmark->setText("B");
     m_bookmark->setFixedWidth(25);;
     QWidget *w = new QWidget();
@@ -145,9 +146,6 @@ void BrowserWindow::titleChanged(const QString &title)
      if(view)
          if(!view->isIncognito)
          {
-             //const QUrl url = view->url();
-             //const QString title = view->title();
-             //history()->addHistoryEntry(url,title);
               history()->addHistoryEntry(view);
          }
 
@@ -166,8 +164,10 @@ void BrowserWindow::urlChanged(const QUrl &url)
 
 void BrowserWindow::addToBookmarks()
 {
-    //BookmarkDialog * dialog = new BookmarkDialog(":/data/bookmarks",currentTab(),this);
-    BookmarkDialog * dialog = new BookmarkDialog("C:\\Programming\\Qt\\browser\\bookmarks",currentTab(),this);
+    //load bookmarks from app local data of pc
+    // or make, if it doesn't exist
+    const QString file = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)+ QLatin1String("/bookmarks");
+    BookmarkDialog * dialog = new BookmarkDialog(file,currentTab(),this);
     connect(dialog,&BookmarkDialog::newBookmarkTab,m_tabWidget,&TabWidget::loadURL);
     dialog->exec();
 }
@@ -201,6 +201,7 @@ QMenu *BrowserWindow::createFileMenu(TabWidget *tabWidget)
     fileMenu->addAction(newIncognitoTabAction);
 
     QAction *savePage = new QAction(tr("&Save page"), this);
+    savePage->setShortcuts(QKeySequence::Save);
     connect(savePage, &QAction::triggered, [this]() {
         SavePageDialog * dialog = new SavePageDialog(nullptr,QWebEngineDownloadItem::SavePageFormat::UnknownSaveFormat,this->currentTab());
         dialog->exec();
@@ -228,23 +229,12 @@ QMenu *BrowserWindow::createFileMenu(TabWidget *tabWidget)
     return fileMenu;
 }
 
-QMenu *BrowserWindow::createViewMenu()//QToolBar *toolbar
+QMenu *BrowserWindow::createViewMenu()
 {
     QMenu *viewMenu = new QMenu(tr("&View"));
-    m_stopAction = viewMenu->addAction(tr("&Stop"));
     QList<QKeySequence> shortcuts;
     shortcuts.append(QKeySequence(Qt::CTRL | Qt::Key_Period));
     shortcuts.append(Qt::Key_Escape);
-    m_stopAction->setShortcuts(shortcuts);
-    /*connect(m_stopAction, &QAction::triggered, [this]() {
-        m_tabWidget->triggerWebPageAction(QWebEnginePage::Stop);
-    });
-*/
-    m_reloadAction = viewMenu->addAction(tr("Reload Page"));
-    /*m_reloadAction->setShortcuts(QKeySequence::Refresh);
-    connect(m_reloadAction, &QAction::triggered, [this]() {
-        m_tabWidget->triggerWebPageAction(QWebEnginePage::Reload);
-    });*/
 
     QAction *zoomIn = viewMenu->addAction(tr("Zoom &In"));
     zoomIn->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Plus));
@@ -308,22 +298,6 @@ QMenu *BrowserWindow::createOptionsMenu()
         settings->show();
     });
     menu->addAction(showSettings);
-    /*connect(menu, &QMenu::aboutToShow, [this, menu, nextTabAction, previousTabAction]() {
-        menu->clear();
-        menu->addAction(nextTabAction);
-        menu->addAction(previousTabAction);
-        menu->addSeparator();
-
-        QVector<BrowserWindow*> windows = m_browser->windows();
-        int index(-1);
-        for (auto window : windows) {
-            QAction *action = menu->addAction(window->windowTitle(), this, &BrowserWindow::handleShowWindowTriggered);
-            action->setData(++index);
-            action->setCheckable(true);
-            if (window == this)
-                action->setChecked(true);
-        }
-    });*/
     return menu;
 }
 

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/data">
+        <file>KODBYDOT.png</file>
+        <file>browsedata.db</file>
+    </qresource>
+</RCC>

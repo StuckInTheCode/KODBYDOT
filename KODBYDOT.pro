@@ -1,6 +1,7 @@
 QT += core gui sql
 QT += webenginewidgets
 CONFIG += c++11
+CONFIG += static
 
 TARGET = KODBYDOT
 TEMPLATE = app
@@ -18,7 +19,7 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs depr
 
 
 SOURCES += \
-        main.cpp \
+    main.cpp \
     browser.cpp \
     browserwindow.cpp \
     webview.cpp \
@@ -69,7 +70,6 @@ FORMS += \
     cookiejar.ui \
     cookiemanager.ui \
     cookiedialog.ui \
-    search.ui \
     sslerror.ui \
     historymanager.ui \
     savepagedialog.ui \

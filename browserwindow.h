@@ -29,12 +29,8 @@ public:
     QWebEngineProfile *profile() { return m_profile;}
 private:
     QMenu *createFileMenu(TabWidget *tabWidget);
-    QMenu *createEditMenu();
     QMenu *createViewMenu();
-    QMenu *createWindowMenu(TabWidget *tabWidget);
     QMenu *createOptionsMenu();
-    QMenu *createHelpMenu();
-    QToolBar *createToolBar();
 public slots:
     void load();
     void loadURL(QUrl url);
@@ -42,8 +38,6 @@ public slots:
     void urlChanged(const QUrl &url);
     void titleChanged(const QString &title);
 private:
-    QAction *m_stopAction;
-    QAction *m_reloadAction;
     Browser *m_browser;
     CookieJar *m_cookiejar;
     CookieManager * m_cookiemanager;
