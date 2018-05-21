@@ -1,12 +1,9 @@
 #include "history.h"
 #include "historymodel.h"
 #include "browserwindow.h"
-//#include "iconprovider.h"
-//#include "settings.h"
-//#include "mainapplication.h"
 #include "sqldatabase.h"
 #include "webview.h"
-//#include <QSqlQuery>
+#include <QBuffer>
 #include <QWebEngineProfile>
 #include <QSettings>
 History::History(QObject* parent)
@@ -44,11 +41,32 @@ void History::addHistoryEntry(QWebEngineView* view)
     const QString title = view->title();
 
     addHistoryEntry(url, title);
+    QSqlQuery query(SqlDatabase::instance()->database());
+    query.prepare("SELECT id FROM icons WHERE url = ?");
+    query.bindValue(0,url.toEncoded());
+    query.exec();
+
+    if (query.next()) {
+        query.prepare("UPDATE icons SET icon = ? WHERE url = ?");
+    }
+    else {
+        query.prepare("INSERT INTO icons (icon, url) VALUES (?,?)");
+    }
+
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    buffer.open(QIODevice::WriteOnly);
+    QPixmap image = view->icon().pixmap(20,20);
+    image.save(&buffer, "PNG");
+
+    query.bindValue(0, buffer.data());
+    query.bindValue(1, url.toEncoded());
+    query.exec();
 }
 
 void History::addHistoryEntry(const QUrl &url, QString title)
 {
-    if (!m_isSaving) {
+     if (!m_isSaving) {
         return;
     }
 
@@ -159,7 +177,6 @@ void History::deleteHistoryEntry(const QList<int> &list)
         urls.append(entry.url);
         emit historyEntryDeleted(entry);
     }
-
     db.commit();
 }
 
@@ -229,10 +246,6 @@ void History::clearHistory()
     QSqlQuery query(SqlDatabase::instance()->database());
     query.prepare(QString("DELETE FROM history"));
     query.exec();
-    //query.exec(QSL("DELETE FROM history"));
-    //query.exec(QSL("VACUUM"));
-    //mApp->webProfile()->clearAllVisitedLinks();
-    //QWebEngineProfile::clearVisitedLinks();
     emit resetHistory();
 }
 

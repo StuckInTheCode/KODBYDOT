@@ -1,9 +1,6 @@
 #include "historytreeview.h"
 #include "historymodel.h"
 #include "historyitem.h"
-//#include "headerview.h"
-//#include "mainapplication.h"
-//#include "iconprovider.h"
 #include "browserwindow.h"
 #include "browser.h"
 #include <QClipboard>
@@ -11,11 +8,12 @@
 #include <QLineEdit>
 #include <QMenu>
 #include <QHeaderView>
+#include <QSqlQuery>
+#include <sqldatabase.h>
 HistoryTreeView::HistoryTreeView(QWidget* parent)
     : QTreeView(parent)
     , m_history(0)
     , m_filter(0)
-    , m_type(HistoryManagerViewType)
 {
     setUniformRowHeights(true);
     setAllColumnsShowFocus(true);
@@ -26,39 +24,6 @@ void HistoryTreeView::Init(History * history)
     m_history=history;
     m_filter=new HistoryFilterModel(m_history->model());
     setModel(m_filter);
-    //connect(m_filter, SIGNAL(expandAllItems()), this, SLOT(expandAll()));
-    //connect(m_filter, SIGNAL(collapseAllItems()), this, SLOT(collapseAll()));
-
-}
-HistoryTreeView::ViewType HistoryTreeView::viewType() const
-{
-    return m_type;
-}
-
-void HistoryTreeView::setViewType(HistoryTreeView::ViewType type)
-{
-    m_type = type;
-
-    switch (m_type) {
-    case HistoryManagerViewType:
-        setColumnHidden(1, false);
-        setColumnHidden(2, false);
-        setColumnHidden(3, false);
-        setHeaderHidden(false);
-        setMouseTracking(false);
-        setSelectionMode(QAbstractItemView::ExtendedSelection);
-        break;
-    case HistorySidebarViewType:
-        setColumnHidden(1, true);
-        setColumnHidden(2, true);
-        setColumnHidden(3, true);
-        setHeaderHidden(true);
-        setMouseTracking(true);
-        setSelectionMode(QAbstractItemView::SingleSelection);
-        break;
-    default:
-        break;
-    }
 }
 
 QUrl HistoryTreeView::selectedUrl() const
@@ -67,8 +32,6 @@ QUrl HistoryTreeView::selectedUrl() const
 
     if (indexes.count() != 1)
         return QUrl();
-
-    // TopLevelItems have invalid (empty) UrlRole data
     return indexes.at(0).data(HistoryModel::UrlRole).toUrl();
 }
 
@@ -105,8 +68,6 @@ void HistoryTreeView::removeSelectedItems()
 
     m_history->deleteHistoryEntry(list);
     m_history->model()->removeTopLevelIndexes(topLevelIndexes);
-
-    //QApplication::restoreOverrideCursor();
 }
 
 void HistoryTreeView::contextMenuEvent(QContextMenuEvent* event)
@@ -117,17 +78,6 @@ void HistoryTreeView::contextMenuEvent(QContextMenuEvent* event)
 void HistoryTreeView::mouseMoveEvent(QMouseEvent* event)
 {
     QTreeView::mouseMoveEvent(event);
-
-    if (m_type == HistorySidebarViewType) {
-        QCursor cursor = Qt::ArrowCursor;
-        if (event->buttons() == Qt::NoButton) {
-            QModelIndex index = indexAt(event->pos());
-            if (index.isValid() && !index.data(HistoryModel::IsTopLevelRole).toBool()) {
-                cursor = Qt::PointingHandCursor;
-            }
-        }
-        viewport()->setCursor(cursor);
-    }
 }
 
 void HistoryTreeView::mousePressEvent(QMouseEvent* event)
@@ -141,11 +91,7 @@ void HistoryTreeView::mousePressEvent(QMouseEvent* event)
 
         if (index.isValid() && !index.data(HistoryModel::IsTopLevelRole).toBool()) {
             const QUrl url = index.data(HistoryModel::UrlRole).toUrl();
-
-            if (buttons == Qt::LeftButton && modifiers == Qt::ShiftModifier) {
-                emit urlShiftActivated(url);
-            }
-            else if (buttons == Qt::MiddleButton || (buttons == Qt::LeftButton && modifiers == Qt::ControlModifier)) {
+            if (buttons == Qt::MiddleButton || (buttons == Qt::LeftButton && modifiers == Qt::ControlModifier)) {
                 emit urlCtrlActivated(url);
             }
         }
@@ -162,10 +108,6 @@ void HistoryTreeView::mouseReleaseEvent(QMouseEvent* event)
         if (index.isValid() && !index.data(HistoryModel::IsTopLevelRole).toBool()) {
             const QUrl url = index.data(HistoryModel::UrlRole).toUrl();
 
-            // Activate urls with single mouse click in Sidebar
-            if (m_type == HistorySidebarViewType && event->button() == Qt::LeftButton && event->modifiers() == Qt::NoModifier) {
-                emit urlActivated(url);
-            }
         }
     }
 }
@@ -180,14 +122,6 @@ void HistoryTreeView::mouseDoubleClickEvent(QMouseEvent* event)
         if (index.isValid() && !index.data(HistoryModel::IsTopLevelRole).toBool()) {
             const QUrl url = index.data(HistoryModel::UrlRole).toUrl();
             Qt::MouseButtons buttons = event->buttons();
-            /*Qt::KeyboardModifiers modifiers = QApplication::keyboardModifiers();
-
-            if (buttons == Qt::LeftButton && modifiers == Qt::NoModifier) {
-                emit urlActivated(url);
-            }
-            else if (buttons == Qt::LeftButton && modifiers == Qt::ShiftModifier) {
-                emit urlShiftActivated(url);
-            }*/
         }
     }
 }
@@ -209,15 +143,11 @@ void HistoryTreeView::keyPressEvent(QKeyEvent* event)
             }
             else {
                 Qt::KeyboardModifiers modifiers = event->modifiers();
-
-                if (modifiers == Qt::NoModifier || modifiers == Qt::KeypadModifier) {
-                    emit urlActivated(url);
-                }
-                else if (modifiers == Qt::ControlModifier) {
+                if (modifiers == Qt::ControlModifier) {
                     emit urlCtrlActivated(url);
                 }
-                else if (modifiers == Qt::ShiftModifier) {
-                    emit urlShiftActivated(url);
+                else if (modifiers == Qt::NoModifier || modifiers == Qt::KeypadModifier) {
+                    emit urlActivated(url);
                 }
             }
             break;
@@ -231,12 +161,31 @@ void HistoryTreeView::keyPressEvent(QKeyEvent* event)
 
 void HistoryTreeView::drawRow(QPainter* painter, const QStyleOptionViewItem &options, const QModelIndex &index) const
 {
-    bool itemTopLevel = index.data(HistoryModel::IsTopLevelRole).toBool();
-    bool iconLoaded = !index.data(HistoryModel::IconRole).value<QIcon>().isNull();
+   bool itemTopLevel = index.data(HistoryModel::IsTopLevelRole).toBool();
+   bool iconLoaded = !index.data(HistoryModel::IconRole).value<QIcon>().isNull();
 
-    if (index.isValid() && !itemTopLevel && !iconLoaded) {
+   QUrl url = index.data(HistoryModel::UrlRole).toUrl();
+   const QByteArray encodedUrl = url.toEncoded();
+
+   QSqlQuery query(SqlDatabase::instance()->database());
+   QString str = QString::fromUtf8(encodedUrl);
+   query.prepare("SELECT icon FROM icons WHERE url GLOB ? LIMIT 1");
+   str.replace('[', QStringLiteral("[["));
+   str.replace(']', QStringLiteral("[]]"));
+   str.replace(QStringLiteral("[["), QStringLiteral("[[]"));
+   str.replace('*', QStringLiteral("[*]"));
+   str.replace('?', QStringLiteral("[?]"));
+   query.addBindValue(QString("%1*").arg(str));
+   query.exec();
+   QImage image;
+   if (query.next()) {
+       image = QImage::fromData(query.value(0).toByteArray());
+   }
+   QIcon img(QPixmap::fromImage(image));
+   if (index.isValid() && !itemTopLevel && !iconLoaded) {
         const QPersistentModelIndex idx = index;
-    }
+        model()->setData(idx, img, HistoryModel::IconRole);
+   }
 
-    QTreeView::drawRow(painter, options, index);
+   QTreeView::drawRow(painter, options, index);
 }
