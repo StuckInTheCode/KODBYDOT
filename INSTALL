@@ -1,0 +1,7 @@
+To build a standalone app follow the algorithm, that written below
+1. Build Application for Release
+2. Find windeployqt programm, for more information read http://doc.qt.io/qt-5/windows-deployment.html
+3. Open Command Prompt
+4. Run windeployqt whith "/...", where "/..." - is an adress of catalog of your .exe file
+5. Add missing Qt .dll Dependency if neseccery
+6. App is ready to use
